@@ -443,16 +443,23 @@
       background: rgba(190,75,219,0.14);
     }
 
-    .elo-pill {
-      display: inline-flex;
-      min-width: 62px;
-      justify-content: center;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
+.elo-pill {
+  display: inline-flex;
+  flex-direction: column; /* Permite 2 linhas dentro */
+  align-items: center;    /* Centraliza horizontal */
+  justify-content: center;/* Centraliza vertical */
+  text-align: center;     /* Garantia extra */
+  line-height: 1.25;
+  padding: 6px 12px;
+  min-width: 120px;       /* Mais espaço → melhor estética */
+  max-width: 180px;       /* Evita ficar gigante */
+  border-radius: 999px;
+  font-size: 0.82rem;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.12);
+  white-space: normal;    /* Permite quebra */
+}
+
 
 	/* Cores por ELO */
 .elo-conqueror {
@@ -491,6 +498,11 @@
   border-color: #d08948;
 }
 
+.elo-break {
+  display: block;
+  margin-top: 2px;
+  opacity: 0.95;
+}
 	  
     a.aoe-link {
       color: var(--accent-yellow);
@@ -519,6 +531,7 @@
     footer span {
       opacity: 0.7;
     }
+
   </style>
 </head>
 
@@ -725,15 +738,20 @@
         const roleClass = roleClassMap[role] || "sub";
 
         // Classes corretas para os elos
-        const soloClass = getEloClass(soloStatus);
-        const teamClass = getEloClass(teamStatus);
+const soloClass = getEloClass(soloStatus);
+const teamClass = getEloClass(teamStatus);
+
+// Força quebra no traço para 2 linhas
+const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
+const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
+
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><span class="role-badge ${roleClass}">${role}</span></td>
           <td>${nomeFormatado}</td>
-          <td><span class="elo-pill ${soloClass}">${soloStatus}</span></td>
-          <td><span class="elo-pill ${teamClass}">${teamStatus}</span></td>
+<td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
+<td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
           <td>${matchs}</td>
           <td>
             <a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">
@@ -753,4 +771,5 @@
   
 </body>
 </html>
+
 
