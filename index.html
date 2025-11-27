@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clan IMBR - Age of Empires IV</title>
+
+  <style>
+    :root {
+      --bg-dark: #050816;
+      --bg-card: #0b1020;
+      --accent-green: #00b36b;
+      --accent-yellow: #f5c542;
+      --accent-blue: #1c7ed6;
+      --text-main: #f5f5f5;
+      --text-soft: #b0b3c0;
+      --border-soft: #252a3a;
+      --shadow-soft: 0 18px 40px rgba(0,0,0,0.65);
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #13315c 0, #050816 50%, #02040a 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* HEADER FIXO */
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(90deg, rgba(5,8,22,0.95), rgba(0,40,80,0.92));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-box img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: radial-gradient(circle, rgba(0,179,107,0.15), transparent 70%);
+    }
+	
+	.intro-logo-fade{
+		position:absolute; right:20px; top:50%; transform:translateY(-50%);
+		width:220px; opacity:0; pointer-events:none;
+		filter:drop-shadow(0 0 20px rgba(0,0,0,0.4));
+		animation:fadeInLogo 2.5s ease forwards;
+	}
+	@keyframes fadeInLogo{
+		from{opacity:0; transform:translateY(-50%) scale(0.92);}
+		to{opacity:0.22; transform:translateY(-50%) scale(1);}
+	}
+
+    .logo-text-main {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .logo-text-sub {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    @media (max-width: 600px) {
+      .logo-text-main {
+        font-size: 1.1rem;
+      }
+      .logo-box img {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    /* CONTEÚDO PRINCIPAL */
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 110px 20px 40px; /* padding-top compensa o header fixo */
+    }
+	
+	.logo-big-card {
+		background: var(--bg-card);
+		border-radius: var(--radius-lg);
+		padding: 20px 10px;
+		margin-bottom: 15px;
+		text-align: center;
+		box-shadow: var(--shadow-soft);
+		border: 1px solid rgba(255,255,255,0.05);
+	}
+
+	.logo-big {
+		width: 500px;
+		max-width: 150%;
+		filter: drop-shadow(0 0 25px rgba(0,255,140,0.25));
+		animation: logoFadeIn 2s ease forwards;
+		opacity: 0;
+	}
+
+	@keyframes logoFadeIn {
+		0% { opacity: 0; transform: scale(0.85); }
+		100% { opacity: 1; transform: scale(1); }
+	}
+
+    .intro-card {
+      background: radial-gradient(circle at top left, rgba(0,179,107,0.22), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(28,126,214,0.25), transparent 55%),
+                  var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 28px 28px 26px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 28px;
+    }
+
+    .intro-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: rgba(0,179,107,0.18);
+      border: 1px solid rgba(0,179,107,0.5);
+      color: #d7fff0;
+      margin-bottom: 12px;
+    }
+
+    .intro-tag span.icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00ff99;
+      box-shadow: 0 0 10px rgba(0,255,153,0.9);
+    }
+
+    .intro-title {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .intro-highlight {
+      color: var(--accent-yellow);
+    }
+
+    .intro-text {
+      color: var(--text-soft);
+      font-size: 0.98rem;
+      max-width: 760px;
+    }
+
+	.duelos-card {
+		background: var(--bg-card);
+		border-radius: var(--radius-lg);
+		padding: 26px;
+		border: 1px solid var(--border-soft);
+		box-shadow: var(--shadow-soft);
+		margin-bottom: 30px;
+	}
+
+	.duelos-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 16px;
+		color: var(--accent-yellow);
+		text-shadow: 0 0 12px rgba(255, 230, 0, 0.25);
+	}
+
+	.win {
+		color: #00ff80;
+		font-weight: 700;
+		}
+
+	.loss {
+		color: #ff4d4d;
+		font-weight: 700;
+	}
+
+/* CARD DO ÚLTIMO VÍDEO */
+.youtube-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.youtube-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-green);
+  margin-bottom: 18px;
+  text-shadow: 0 0 14px rgba(0, 255, 120, 0.25);
+}
+
+/* FRAME RESPONSIVO */
+.youtube-frame-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 120, 0.15);
+}
+
+.youtube-frame-container iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 14px;
+}
+
+/* IMBR neon alternando verde ↔ amarelo */
+.imbr-pulse {
+  font-weight: 900;
+  animation: pulseIMBR 1.6s infinite ease-in-out;
+}
+
+@keyframes pulseIMBR {
+  0% {
+    color: #00ff5e;
+    text-shadow: 0 0 6px #00ff5e;
+  }
+  50% {
+    color: #ffe600;
+    text-shadow: 0 0 10px #ffe600;
+  }
+  100% {
+    color: #00ff5e;
+    text-shadow: 0 0 6px #00ff5e;
+  }
+}
+
+
+    /* TABELA DA LINEUP */
+
+    .lineup-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 24px 22px 20px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .lineup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .lineup-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .lineup-sub {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+    }
+
+    .role-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(5,8,22,0.9);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+
+    thead {
+      background: linear-gradient(90deg, rgba(0,179,107,0.25), rgba(28,126,214,0.25));
+    }
+
+    th,
+    td {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      color: #e1e5f0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(11,16,32,0.96);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(8,12,26,0.96);
+    }
+
+    tbody tr:hover {
+      background: rgba(0,179,107,0.16);
+      transition: background 0.18s ease-out;
+    }
+
+    .player-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,197,66,0.6), transparent 65%);
+      border: 2px solid rgba(255,255,255,0.35);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .nick {
+      font-weight: 600;
+    }
+	
+	.imbr-pulse {
+		font-weight: 900;
+		animation: pulseIMBR 1.6s infinite ease-in-out;
+	}
+
+	@keyframes pulseIMBR {
+		0% {
+			color: #00ff5e;            /* verde neon */
+			-shadow: 0 0 6px #00ff5e;
+		}
+		50% {
+			color: #ffe600;            /* amarelo neon */
+			text-shadow: 0 0 10px #ffe600;
+		}
+		100% {
+			color: #00ff5e;            /* volta ao verde */
+			text-shadow: 0 0 6px #00ff5e;
+		}
+	}
+
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-soft);
+    }
+
+    .role-badge.main {
+      border-color: rgba(0,179,107,0.6);
+      color: #d1ffe5;
+      background: rgba(0,179,107,0.16);
+    }
+
+    .role-badge.sub {
+      border-color: rgba(245,197,66,0.6);
+      color: #fff4cf;
+      background: rgba(245,197,66,0.14);
+    }
+
+    .role-badge.coach {
+      border-color: rgba(28,126,214,0.7);
+      color: #dcebff;
+      background: rgba(28,126,214,0.18);
+    }
+
+    .role-badge.staff {
+      border-color: rgba(190,75,219,0.7);
+      color: #f6ddff;
+      background: rgba(190,75,219,0.14);
+    }
+
+    .elo-pill {
+      display: inline-flex;
+      min-width: 62px;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    a.aoe-link {
+      color: var(--accent-yellow);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    a.aoe-link:hover {
+      text-decoration: underline;
+      color: #ffe083;
+    }
+
+    /* FOOTER */
+
+    footer {
+      max-width: 1100px;
+      margin: 20px auto 28px;
+      padding: 0 20px;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      text-align: right;
+    }
+
+
+    footer span {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo-box">
+        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+        <div>
+          <div class="logo-text-main">IMBR</div>
+          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+	<section class="logo-big-card">
+			<img src="imbr-logo.png" alt="Logo IMBR" class="logo-big">
+		</section> 
+  
+    <section class="intro-card">
+      <div class="intro-tag">
+        <span class="icon"></span>
+        <span>Disponível para duelos!</span>
+      </div>
+      <h1 class="intro-title">
+        Clan <span class="intro-highlight">IMBR</span> · Age of Empires IV
+      </h1>
+      <p class="intro-text">
+        O <strong>IMBR</strong> é um clã brasileiro liderado pelo streamer <strong>GKS</strong>, focado em competições e ranqueadas de
+        <strong>Age of Empires IV</strong>, unindo jogadores experientes e novos talentos da comunidade.
+        Nosso objetivo é evoluir juntos, representar o Brasil nos torneios online e manter um ambiente
+        competitivo, organizado e bem-humorado.
+      </p>
+    </section>
+
+	<section class="duelos-card">
+  <h2 class="duelos-title">🔥 Últimos Duelos</h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Oponente</th>
+          <th>Formato</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>26/11/2025</td>
+          <td>Aleatorio</td>
+          <td>Bo3 2x2</td>
+          <td><span class="win">Vitória</span></td>
+        </tr>
+        <tr>
+          <td>---</td>
+          <td>---</td>
+          <td>---</td>
+          <td><span class="">---</span></td>
+        </tr>
+        <tr>
+          <td>---</td>
+          <td>---</td>
+          <td>---</td>
+          <td><span class="">---</span></td>
+        </tr>
+        <tr>
+          <td>---</td>
+          <td>---</td>
+          <td>---</td>
+          <td><span class="">---</span></td>
+        </tr>
+        <tr>
+          <td>---</td>
+          <td>---</td>
+          <td>---</td>
+          <td><span class="">---</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+	<section class="youtube-card">
+		<h2 class="youtube-title">🎬 Último Vídeo do Canal GKS</h2>
+		<div class="youtube-frame-container">
+			<iframe 
+				src="https://www.youtube.com/embed/C7uMXbv0FZM" 
+				title="Último vídeo do canal"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen>
+			</iframe>
+		</div>
+	</section>
+
+    <section class="lineup-card">
+      <div class="lineup-header">
+        <div>
+          <h2 class="lineup-title">Lineup &amp; Staff</h2>
+          <p class="lineup-sub">
+            Lista de jogadores titulares, reservas, coach e management do clan.
+          </p>
+        </div>
+        <div class="role-pill">
+          <span class="role-dot"></span> Atualizado 26/11
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+			<thead>
+				<tr>
+					<th>Função</th>
+					<th>Jogador</th>
+					<th>Solo Status</th>
+					<th>Team Status</th>
+					<th>Matchs últimos 30 dias (50Máx)</th>
+					<th>Perfil aoe4world</th>
+				</tr>
+			</thead>
+			<tbody id="lineup-body">
+				<!-- Linhas serão inseridas via JavaScript -->
+			</tbody>
+
+
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
+  </footer>
+  
+<script>
+  // URL CSV publicado do Google Sheets
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+
+  // Mapeia função (role) para classe de badge
+  const roleClassMap = {
+    "Coach": "coach",
+    "Titular": "main",
+    "Recruta": "sub",
+    "Manager": "staff",
+    "Staff": "staff"
+  };
+
+  fetch(SHEET_CSV_URL)
+    .then(response => response.text())
+    .then(csvText => {
+      const tbody = document.getElementById("lineup-body");
+      if (!tbody) return;
+
+      const lines = csvText.trim().split("\n");
+      if (lines.length <= 1) return;
+
+      // Pula a primeira linha (cabeçalho)
+      lines.slice(1).forEach(line => {
+        if (!line.trim()) return;
+
+        const cols = line.split(",");
+
+        // Ordem atual da sua planilha:
+        // 0 = Nome
+        // 1 = role
+        // 2 = Solo Status
+        // 3 = Team Status
+        // 4 = Matchs últimos 30 dias (50Máx)
+        // 5 = Perfil AoE4World
+        const nome        = (cols[0] || "").trim();
+        const role        = (cols[1] || "").trim();
+        const soloStatus  = (cols[2] || "").trim();
+        const teamStatus  = (cols[3] || "").trim();
+        const matchs      = (cols[4] || "").trim();
+        const perfilUrl   = (cols[5] || "#").trim();
+
+        if (!nome) return; // ignora linha vazia
+
+        // Formatação especial do nome quando começa com IMBR
+        let nomeFormatado = nome;
+        const upperNome = nome.toUpperCase();
+        if (upperNome.startsWith("IMBR")) {
+          // remove "IMBR" e trata o resto (ex: "| gks")
+          let resto = nome.slice(4).trim();
+          if (resto.startsWith("|")) {
+            resto = resto.slice(1).trim();
+          }
+          nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
+        }
+
+        const roleClass = roleClassMap[role] || "sub";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="role-badge ${roleClass}">${role}</span></td>
+          <td>${nomeFormatado}</td>
+          <td><span class="elo-pill">${soloStatus}</span></td>
+          <td><span class="elo-pill">${teamStatus}</span></td>
+          <td>${matchs}</td>
+          <td>
+            <a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">
+              Ver perfil
+            </a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      console.error("Erro ao carregar lineup da planilha:", err);
+    });
+</script>
+
+  
+</body>
+</html>
