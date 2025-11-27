@@ -454,6 +454,44 @@
       border: 1px solid rgba(255,255,255,0.12);
     }
 
+	/* Cores por ELO */
+.elo-conqueror {
+  background: rgba(255, 120, 0, 0.25);
+  color: #ffae42;
+  border-color: #ffae42;
+}
+
+.elo-diamond {
+  background: rgba(0, 240, 255, 0.18);
+  color: #7beaff;
+  border-color: #7beaff;
+}
+
+.elo-platinum {
+  background: rgba(180, 180, 180, 0.18);
+  color: #e0e0e0;
+  border-color: #e0e0e0;
+}
+
+.elo-gold {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffdd55;
+  border-color: #ffdd55;
+}
+
+.elo-silver {
+  background: rgba(200, 200, 200, 0.14);
+  color: #cccccc;
+  border-color: #cccccc;
+}
+
+.elo-bronze {
+  background: rgba(160, 90, 20, 0.25);
+  color: #d08948;
+  border-color: #d08948;
+}
+
+	  
     a.aoe-link {
       color: var(--accent-yellow);
       text-decoration: none;
@@ -634,6 +672,20 @@
     "Staff": "staff"
   };
 
+  // Detecta classe de cor do elo
+  function getEloClass(texto) {
+    const t = texto.toLowerCase();
+
+    if (t.includes("conquer")) return "elo-conqueror";
+    if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
+    if (t.includes("plat")) return "elo-platinum";
+    if (t.includes("gold") || t.includes("ouro")) return "elo-gold";
+    if (t.includes("silver") || t.includes("prata")) return "elo-silver";
+    if (t.includes("bronze")) return "elo-bronze";
+
+    return "";
+  }
+
   fetch(SHEET_CSV_URL)
     .then(response => response.text())
     .then(csvText => {
@@ -650,12 +702,6 @@
         const cols = line.split(",");
 
         // Ordem atual da sua planilha:
-        // 0 = Nome
-        // 1 = role
-        // 2 = Solo Status
-        // 3 = Team Status
-        // 4 = Matchs últimos 30 dias (50Máx)
-        // 5 = Perfil AoE4World
         const nome        = (cols[0] || "").trim();
         const role        = (cols[1] || "").trim();
         const soloStatus  = (cols[2] || "").trim();
@@ -669,7 +715,6 @@
         let nomeFormatado = nome;
         const upperNome = nome.toUpperCase();
         if (upperNome.startsWith("IMBR")) {
-          // remove "IMBR" e trata o resto (ex: "| gks")
           let resto = nome.slice(4).trim();
           if (resto.startsWith("|")) {
             resto = resto.slice(1).trim();
@@ -679,12 +724,16 @@
 
         const roleClass = roleClassMap[role] || "sub";
 
+        // Classes corretas para os elos
+        const soloClass = getEloClass(soloStatus);
+        const teamClass = getEloClass(teamStatus);
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><span class="role-badge ${roleClass}">${role}</span></td>
           <td>${nomeFormatado}</td>
-          <td><span class="elo-pill">${soloStatus}</span></td>
-          <td><span class="elo-pill">${teamStatus}</span></td>
+          <td><span class="elo-pill ${soloClass}">${soloStatus}</span></td>
+          <td><span class="elo-pill ${teamClass}">${teamStatus}</span></td>
           <td>${matchs}</td>
           <td>
             <a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">
@@ -700,6 +749,8 @@
     });
 </script>
 
+
   
 </body>
 </html>
+
