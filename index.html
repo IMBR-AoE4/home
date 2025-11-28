@@ -733,15 +733,17 @@
       <div class="table-wrapper">
         <table>
 			<thead>
-				<tr>
-					<th>Função</th>
-					<th>Jogador</th>
-					<th>Solo Status</th>
-					<th>Team Status</th>
-					<th>Matchs últimos 30 dias (50Máx)</th>
-					<th>Perfil aoe4world</th>
-				</tr>
+			  <tr>
+			    <th>Função</th>
+			    <th>Jogador</th>
+			    <th>Solo Status</th>
+			    <th>Team Status</th>
+			    <th>Matches últimos 30 dias</th>
+			    <th>Dias no Clan</th>
+			    <th>Perfil aoe4world</th>
+			  </tr>
 			</thead>
+
 			<tbody id="lineup-body">
 				<!-- Linhas serão inseridas via JavaScript -->
 			</tbody>
@@ -825,13 +827,15 @@
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
-        const cols = line.split(",");
-        const nome       = (cols[0] || "").trim();
-        const role       = (cols[1] || "").trim();
-        const soloStatus = (cols[2] || "").trim();
-        const teamStatus = (cols[3] || "").trim();
-        const matchs     = (cols[4] || "").trim();
-        const perfilUrl  = (cols[5] || "#").trim();
+		const cols = line.split(",");
+		const nome       = (cols[0] || "").trim();
+		const role       = (cols[1] || "").trim();
+		const soloStatus = (cols[2] || "").trim();
+		const teamStatus = (cols[3] || "").trim();
+		const matchs     = (cols[4] || "").trim();
+		const diasClan   = (cols[5] || "").trim();
+		const perfilUrl  = (cols[6] || "#").trim();
+
 
         if (!nome) return; // ignora linha vazia
 
@@ -860,14 +864,16 @@
 
         // Linha da tabela da lineup
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><span class="role-badge ${roleClass}">${role}</span></td>
-          <td>${nomeFormatado}</td>
-          <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
-          <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
-          <td>${matchs}</td>
-          <td><a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a></td>
-        `;
+		tr.innerHTML = `
+		  <td><span class="role-badge ${roleClass}">${role}</span></td>
+		  <td>${nomeFormatado}</td>
+		  <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
+		  <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
+		  <td>${matchs}</td>
+		  <td>${diasClan}</td>
+		  <td><a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a></td>
+		`;
+
         tbody.appendChild(tr);
       });
 
@@ -890,6 +896,7 @@
   
 </body>
 </html>
+
 
 
 
