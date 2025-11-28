@@ -516,6 +516,56 @@
       color: #ffe083;
     }
 
+.roles-count-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.roles-count-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--accent-yellow);
+  text-shadow: 0 0 12px rgba(255, 230, 0, 0.25);
+}
+
+.roles-count-sub {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  margin-bottom: 20px;
+}
+
+.roles-count-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+}
+
+.role-count-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 16px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.role-count-title {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+.role-count-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent-green);
+}
+
+
     /* FOOTER */
 
     footer {
@@ -633,6 +683,16 @@
 		</div>
 	</section>
 
+<section class="roles-count-card" id="roles-count-card">
+  <h2 class="roles-count-title">📊 Distribuição por Cargo</h2>
+  <p class="roles-count-sub">Resumo dos membros do clã de acordo com suas funções</p>
+
+  <div class="roles-count-grid" id="roles-count-grid">
+    <!-- Os cards serão inseridos via JavaScript -->
+  </div>
+</section>
+
+
     <section class="lineup-card">
       <div class="lineup-header">
         <div>
@@ -673,10 +733,8 @@
   </footer>
   
 <script>
-  // URL CSV publicado do Google Sheets
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-  // Mapeia função (role) para classe de badge
   const roleClassMap = {
     "Coach": "coach",
     "Titular": "main",
@@ -685,87 +743,90 @@
     "Staff": "staff"
   };
 
-  // Detecta classe de cor do elo
+  // Contador dos cargos
+  const roleCounters = {
+    "Coach": 0,
+    "Titular": 0,
+    "Recruta": 0,
+    "Manager": 0,
+    "Staff": 0
+  };
+
   function getEloClass(texto) {
     const t = texto.toLowerCase();
-
     if (t.includes("conquer")) return "elo-conqueror";
     if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
     if (t.includes("plat")) return "elo-platinum";
     if (t.includes("gold") || t.includes("ouro")) return "elo-gold";
     if (t.includes("silver") || t.includes("prata")) return "elo-silver";
     if (t.includes("bronze")) return "elo-bronze";
-
     return "";
   }
 
   fetch(SHEET_CSV_URL)
-    .then(response => response.text())
-    .then(csvText => {
+    .then(r => r.text())
+    .then(csv => {
       const tbody = document.getElementById("lineup-body");
-      if (!tbody) return;
+      const grid = document.getElementById("roles-count-grid");
 
-      const lines = csvText.trim().split("\n");
-      if (lines.length <= 1) return;
-
-      // Pula a primeira linha (cabeçalho)
+      const lines = csv.trim().split("\n");
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
         const cols = line.split(",");
+        const nome = cols[0]?.trim();
+        const role = cols[1]?.trim();
+        const soloStatus = cols[2]?.trim();
+        const teamStatus = cols[3]?.trim();
+        const matchs = cols[4]?.trim();
+        const perfilUrl = cols[5]?.trim();
 
-        // Ordem atual da sua planilha:
-        const nome        = (cols[0] || "").trim();
-        const role        = (cols[1] || "").trim();
-        const soloStatus  = (cols[2] || "").trim();
-        const teamStatus  = (cols[3] || "").trim();
-        const matchs      = (cols[4] || "").trim();
-        const perfilUrl   = (cols[5] || "#").trim();
+        if (!nome) return;
 
-        if (!nome) return; // ignora linha vazia
+        // Soma cargo
+        if (roleCounters[role] !== undefined) {
+          roleCounters[role]++;
+        }
 
-        // Formatação especial do nome quando começa com IMBR
         let nomeFormatado = nome;
-        const upperNome = nome.toUpperCase();
-        if (upperNome.startsWith("IMBR")) {
+        if (nome.toUpperCase().startsWith("IMBR")) {
           let resto = nome.slice(4).trim();
-          if (resto.startsWith("|")) {
-            resto = resto.slice(1).trim();
-          }
+          if (resto.startsWith("|")) resto = resto.slice(1).trim();
           nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
         }
 
         const roleClass = roleClassMap[role] || "sub";
+        const soloClass = getEloClass(soloStatus);
+        const teamClass = getEloClass(teamStatus);
 
-        // Classes corretas para os elos
-const soloClass = getEloClass(soloStatus);
-const teamClass = getEloClass(teamStatus);
-
-// Força quebra no traço para 2 linhas
-const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
-const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
-
+        const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
+        const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><span class="role-badge ${roleClass}">${role}</span></td>
           <td>${nomeFormatado}</td>
-<td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
-<td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
+          <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
+          <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
           <td>${matchs}</td>
-          <td>
-            <a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">
-              Ver perfil
-            </a>
-          </td>
+          <td><a class="aoe-link" href="${perfilUrl}" target="_blank">Ver perfil</a></td>
         `;
         tbody.appendChild(tr);
       });
-    })
-    .catch(err => {
-      console.error("Erro ao carregar lineup da planilha:", err);
+
+      // Monta o card de contagem
+      Object.entries(roleCounters).forEach(([cargo, total]) => {
+        const box = document.createElement("div");
+        box.className = "role-count-box";
+        box.innerHTML = `
+          <div class="role-count-title">${cargo}</div>
+          <div class="role-count-number">${total}</div>
+        `;
+        grid.appendChild(box);
+      });
     });
 </script>
+
 
 
   
