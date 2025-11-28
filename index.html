@@ -539,20 +539,17 @@
   margin-bottom: 20px;
 }
 
-/* 🔹 Uma linha só, com scroll horizontal se faltar espaço */
+/* AGORA SEM SLIDER: centralizado, podendo quebrar linha se precisar */
 .roles-count-grid {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 18px;
-  justify-content: space-between;
-  overflow-x: auto;
-  padding-bottom: 4px;
+  justify-content: center;
 }
 
-/* Bloco base */
 .role-count-box {
-  flex: 1 0 0;
-  min-width: 140px;
+  flex: 0 1 180px;
+  max-width: 220px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
   padding: 16px;
@@ -572,7 +569,12 @@
   color: var(--accent-green);
 }
 
-/* 🔹 Cores iguais às badges da lineup */
+/* Cores batendo com as badges da lineup */
+.role-count-box.coach {
+  border-color: rgba(28,126,214,0.7);
+  background: rgba(28,126,214,0.18);
+}
+
 .role-count-box.main {
   border-color: rgba(0,179,107,0.6);
   background: rgba(0,179,107,0.16);
@@ -583,16 +585,10 @@
   background: rgba(245,197,66,0.14);
 }
 
-.role-count-box.coach {
-  border-color: rgba(28,126,214,0.7);
-  background: rgba(28,126,214,0.18);
-}
-
 .role-count-box.staff {
   border-color: rgba(190,75,219,0.7);
   background: rgba(190,75,219,0.14);
 }
-
 
     /* FOOTER */
 
@@ -761,30 +757,49 @@
   </footer>
   
 <script>
+  // URL CSV publicado do Google Sheets
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-  // Mapeia o texto da planilha para a classe visual do badge
+  // Classes visuais da badge na TABELA (lineup)
   const roleClassMap = {
-    "Coach": "coach",
+    "Coach":   "coach",
     "Titular": "main",
     "Reserva": "sub",
     "Serie B": "sub",
     "Recruta": "sub",
     "Manager": "staff",
-    "Staff": "staff"
+    "Staff":   "staff"
   };
 
-  // Contadores por cargo (como NÚMERO, não string)
+  // Agrupamento lógico para o CARD de Distribuição
+  // (Reserva + Série B + Recruta → "ReservasRecrutas"; Manager + Staff → "Management")
+  const roleGroupMap = {
+    "Coach":   "Coach",
+    "Titular": "Titular",
+    "Reserva": "ReservasRecrutas",
+    "Serie B": "ReservasRecrutas",
+    "Recruta": "ReservasRecrutas",
+    "Manager": "Management",
+    "Staff":   "Management"
+  };
+
+  // Contadores por grupo (apenas 4 blocos)
   const roleCounters = {
-    "Coach": 0,
-    "Titular": 0,
-    "Reserva": 0,
-    "Serie B": 0,
-    "Recruta": 0,
-    "Manager": 0,
-    "Staff": 0
+    "Coach":            0,
+    "Titular":          0,
+    "ReservasRecrutas": 0,
+    "Management":       0
   };
 
+  // Ordem e aparência dos blocos
+  const roleGroupsOrder = [
+    { key: "Coach",            label: "Coach",                         className: "coach" },
+    { key: "Titular",          label: "Titular",                       className: "main" },
+    { key: "ReservasRecrutas", label: "Reserva / Série B / Recruta",  className: "sub" },
+    { key: "Management",       label: "Manager / Staff",              className: "staff" }
+  ];
+
+  // Detecta classe de cor do elo
   function getEloClass(texto) {
     const t = (texto || "").toLowerCase();
     if (t.includes("conquer")) return "elo-conqueror";
@@ -797,16 +812,16 @@
   }
 
   fetch(SHEET_CSV_URL)
-    .then(r => r.text())
-    .then(csv => {
+    .then(response => response.text())
+    .then(csvText => {
       const tbody = document.getElementById("lineup-body");
-      const grid = document.getElementById("roles-count-grid");
-
+      const grid  = document.getElementById("roles-count-grid");
       if (!tbody || !grid) return;
 
-      const lines = csv.trim().split("\n");
+      const lines = csvText.trim().split("\n");
+      if (lines.length <= 1) return;
 
-      // pula cabeçalho
+      // Pula a primeira linha (cabeçalho)
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
@@ -818,28 +833,32 @@
         const matchs     = (cols[4] || "").trim();
         const perfilUrl  = (cols[5] || "#").trim();
 
-        if (!nome) return;
+        if (!nome) return; // ignora linha vazia
 
-        // Soma cargo se existir na lista de contadores
-        if (roleCounters.hasOwnProperty(role)) {
-          roleCounters[role] += 1;
+        // 🔢 Soma no grupo certo para o card
+        const groupKey = roleGroupMap[role];
+        if (groupKey && roleCounters.hasOwnProperty(groupKey)) {
+          roleCounters[groupKey] += 1;
         }
 
-        // IMBR em neon
+        // Formatação especial do nome quando começa com IMBR
         let nomeFormatado = nome;
-        if (nome.toUpperCase().startsWith("IMBR")) {
+        const upperNome = nome.toUpperCase();
+        if (upperNome.startsWith("IMBR")) {
           let resto = nome.slice(4).trim();
-          if (resto.startsWith("|")) resto = resto.slice(1).trim();
+          if (resto.startsWith("|")) {
+            resto = resto.slice(1).trim();
+          }
           nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
         }
 
-        const roleClass  = roleClassMap[role] || "sub";
-        const soloClass  = getEloClass(soloStatus);
-        const teamClass  = getEloClass(teamStatus);
-
+        const roleClass   = roleClassMap[role] || "sub";
+        const soloClass   = getEloClass(soloStatus);
+        const teamClass   = getEloClass(teamStatus);
         const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
         const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
 
+        // Linha da tabela da lineup
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><span class="role-badge ${roleClass}">${role}</span></td>
@@ -852,31 +871,26 @@
         tbody.appendChild(tr);
       });
 
-      // Monta o card de contagem de cargos
-           Object.entries(roleCounters).forEach(([cargo, total]) => {
-        // Define a classe de cor baseada no mesmo mapa da lineup
-        const colorClass = roleClassMap[cargo] || "sub";
+      // 🔹 Monta o card de contagem com APENAS 4 blocos
+      roleGroupsOrder.forEach(group => {
+        const total = roleCounters[group.key] ?? 0;
 
         const box = document.createElement("div");
-        box.className = `role-count-box ${colorClass}`;
-
-        // Nome bonitinho
-        let label = cargo;
-        if (cargo === "Serie B") label = "Série B";
-
+        box.className = `role-count-box ${group.className}`;
         box.innerHTML = `
-          <div class="role-count-title">${label}</div>
+          <div class="role-count-title">${group.label}</div>
           <div class="role-count-number">${total}</div>
         `;
         grid.appendChild(box);
       });
-
     })
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
+
   
 </body>
 </html>
+
 
 
 
