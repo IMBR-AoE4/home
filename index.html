@@ -539,13 +539,20 @@
   margin-bottom: 20px;
 }
 
+/* 🔹 Uma linha só, com scroll horizontal se faltar espaço */
 .roles-count-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 18px;
+  justify-content: space-between;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
+/* Bloco base */
 .role-count-box {
+  flex: 1 0 0;
+  min-width: 140px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
   padding: 16px;
@@ -563,6 +570,27 @@
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--accent-green);
+}
+
+/* 🔹 Cores iguais às badges da lineup */
+.role-count-box.main {
+  border-color: rgba(0,179,107,0.6);
+  background: rgba(0,179,107,0.16);
+}
+
+.role-count-box.sub {
+  border-color: rgba(245,197,66,0.6);
+  background: rgba(245,197,66,0.14);
+}
+
+.role-count-box.coach {
+  border-color: rgba(28,126,214,0.7);
+  background: rgba(28,126,214,0.18);
+}
+
+.role-count-box.staff {
+  border-color: rgba(190,75,219,0.7);
+  background: rgba(190,75,219,0.14);
 }
 
 
@@ -825,11 +853,14 @@
       });
 
       // Monta o card de contagem de cargos
-      Object.entries(roleCounters).forEach(([cargo, total]) => {
-        const box = document.createElement("div");
-        box.className = "role-count-box";
+           Object.entries(roleCounters).forEach(([cargo, total]) => {
+        // Define a classe de cor baseada no mesmo mapa da lineup
+        const colorClass = roleClassMap[cargo] || "sub";
 
-        // Nome bonito pra exibir (ex: "Serie B" -> "Série B")
+        const box = document.createElement("div");
+        box.className = `role-count-box ${colorClass}`;
+
+        // Nome bonitinho
         let label = cargo;
         if (cargo === "Serie B") label = "Série B";
 
@@ -839,12 +870,14 @@
         `;
         grid.appendChild(box);
       });
+
     })
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
   
 </body>
 </html>
+
 
 
 
