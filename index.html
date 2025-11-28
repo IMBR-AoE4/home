@@ -737,19 +737,21 @@
 
   const roleClassMap = {
     "Coach": "coach",
-    "Titular": "main",
-    "Recruta": "sub",
+    "Titular": "Titular",
+	"Reserva": "Reserva",
+	"Serie B": "Serie B"
+    "Recruta": "Recruta",
     "Manager": "staff",
-    "Staff": "staff"
   };
 
   // Contador dos cargos
   const roleCounters = {
-    "Coach": 0,
-    "Titular": 0,
-    "Recruta": 0,
-    "Manager": 0,
-    "Staff": 0
+    "Coach": "0",
+    "Titular": "0",
+	"Reserva": "0",
+	"Serie B": "0"
+    "Recruta": "0",
+    "Manager": "0",
   };
 
   function getEloClass(texto) {
@@ -832,5 +834,6 @@
   
 </body>
 </html>
+
 
 
