@@ -735,27 +735,30 @@
 <script>
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
+  // Mapeia o texto da planilha para a classe visual do badge
   const roleClassMap = {
     "Coach": "coach",
-    "Titular": "Titular",
-	"Reserva": "Reserva",
-	"Serie B": "Serie B"
-    "Recruta": "Recruta",
+    "Titular": "main",
+    "Reserva": "sub",
+    "Serie B": "sub",
+    "Recruta": "sub",
     "Manager": "staff",
+    "Staff": "staff"
   };
 
-  // Contador dos cargos
+  // Contadores por cargo (como NÚMERO, não string)
   const roleCounters = {
-    "Coach": "0",
-    "Titular": "0",
-	"Reserva": "0",
-	"Serie B": "0"
-    "Recruta": "0",
-    "Manager": "0",
+    "Coach": 0,
+    "Titular": 0,
+    "Reserva": 0,
+    "Serie B": 0,
+    "Recruta": 0,
+    "Manager": 0,
+    "Staff": 0
   };
 
   function getEloClass(texto) {
-    const t = texto.toLowerCase();
+    const t = (texto || "").toLowerCase();
     if (t.includes("conquer")) return "elo-conqueror";
     if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
     if (t.includes("plat")) return "elo-platinum";
@@ -771,25 +774,30 @@
       const tbody = document.getElementById("lineup-body");
       const grid = document.getElementById("roles-count-grid");
 
+      if (!tbody || !grid) return;
+
       const lines = csv.trim().split("\n");
+
+      // pula cabeçalho
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
         const cols = line.split(",");
-        const nome = cols[0]?.trim();
-        const role = cols[1]?.trim();
-        const soloStatus = cols[2]?.trim();
-        const teamStatus = cols[3]?.trim();
-        const matchs = cols[4]?.trim();
-        const perfilUrl = cols[5]?.trim();
+        const nome       = (cols[0] || "").trim();
+        const role       = (cols[1] || "").trim();
+        const soloStatus = (cols[2] || "").trim();
+        const teamStatus = (cols[3] || "").trim();
+        const matchs     = (cols[4] || "").trim();
+        const perfilUrl  = (cols[5] || "#").trim();
 
         if (!nome) return;
 
-        // Soma cargo
-        if (roleCounters[role] !== undefined) {
-          roleCounters[role]++;
+        // Soma cargo se existir na lista de contadores
+        if (roleCounters.hasOwnProperty(role)) {
+          roleCounters[role] += 1;
         }
 
+        // IMBR em neon
         let nomeFormatado = nome;
         if (nome.toUpperCase().startsWith("IMBR")) {
           let resto = nome.slice(4).trim();
@@ -797,9 +805,9 @@
           nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
         }
 
-        const roleClass = roleClassMap[role] || "sub";
-        const soloClass = getEloClass(soloStatus);
-        const teamClass = getEloClass(teamStatus);
+        const roleClass  = roleClassMap[role] || "sub";
+        const soloClass  = getEloClass(soloStatus);
+        const teamClass  = getEloClass(teamStatus);
 
         const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
         const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
@@ -811,29 +819,33 @@
           <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
           <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
           <td>${matchs}</td>
-          <td><a class="aoe-link" href="${perfilUrl}" target="_blank">Ver perfil</a></td>
+          <td><a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a></td>
         `;
         tbody.appendChild(tr);
       });
 
-      // Monta o card de contagem
+      // Monta o card de contagem de cargos
       Object.entries(roleCounters).forEach(([cargo, total]) => {
         const box = document.createElement("div");
         box.className = "role-count-box";
+
+        // Nome bonito pra exibir (ex: "Serie B" -> "Série B")
+        let label = cargo;
+        if (cargo === "Serie B") label = "Série B";
+
         box.innerHTML = `
-          <div class="role-count-title">${cargo}</div>
+          <div class="role-count-title">${label}</div>
           <div class="role-count-number">${total}</div>
         `;
         grid.appendChild(box);
       });
-    });
+    })
+    .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
-
-
-
   
 </body>
 </html>
+
 
 
 
