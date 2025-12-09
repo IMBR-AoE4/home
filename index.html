@@ -770,25 +770,22 @@
   </footer>
   
 <script>
-	function aplicarCorPartidas(elemento, valor) {
-	const numero = parseInt(valor.toString().replace("+",""));
+  // 🎨 Função para aplicar cor na célula de partidas (últimos 30 dias)
+  function aplicarCorPartidas(elemento, valor) {
+    if (valor == null) return;
+
+    const numero = parseInt(valor.toString().replace("+", ""));
+
     if (isNaN(numero)) return; // ignora se não for número
 
     if (numero === 0) {
-        elemento.classList.add("partidas-vermelho");
+      elemento.classList.add("partidas-vermelho");
     } else if (numero < 30) {
-        elemento.classList.add("partidas-amarelo");
+      elemento.classList.add("partidas-amarelo");
     } else {
-        elemento.classList.add("partidas-verde");
+      elemento.classList.add("partidas-verde");
     }
-}
-	const partidasSpan = document.createElement("span");
-partidasSpan.textContent = player.matches_last_30d;
-
-// aplica a cor automaticamente
-aplicarCorPartidas(partidasSpan, player.matches_last_30d);
-
-card.appendChild(partidasSpan);
+  }
 
   // URL CSV publicado do Google Sheets
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
@@ -826,8 +823,8 @@ card.appendChild(partidasSpan);
 
   // Ordem e aparência dos blocos
   const roleGroupsOrder = [
-    { key: "Coach",            label: "Coach",                         className: "coach" },
-    { key: "Titular",          label: "Titular",                       className: "main" },
+    { key: "Coach",            label: "Coach",              className: "coach" },
+    { key: "Titular",          label: "Titular",            className: "main" },
     { key: "ReservasRecrutas", label: "Reserva / Recruta",  className: "sub" },
     { key: "Management",       label: "Staff",              className: "staff" }
   ];
@@ -858,15 +855,14 @@ card.appendChild(partidasSpan);
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
-		const cols = line.split(",");
-		const nome       = (cols[0] || "").trim();
-		const role       = (cols[1] || "").trim();
-		const soloStatus = (cols[2] || "").trim();
-		const teamStatus = (cols[3] || "").trim();
-		const matchs     = (cols[4] || "").trim();
-		const diasClan   = (cols[5] || "").trim();
-		const perfilUrl  = (cols[6] || "#").trim();
-
+        const cols = line.split(",");
+        const nome       = (cols[0] || "").trim();
+        const role       = (cols[1] || "").trim();
+        const soloStatus = (cols[2] || "").trim();
+        const teamStatus = (cols[3] || "").trim();
+        const matchs     = (cols[4] || "").trim();
+        const diasClan   = (cols[5] || "").trim();
+        const perfilUrl  = (cols[6] || "#").trim();
 
         if (!nome) return; // ignora linha vazia
 
@@ -895,17 +891,21 @@ card.appendChild(partidasSpan);
 
         // Linha da tabela da lineup
         const tr = document.createElement("tr");
-		tr.innerHTML = `
-		  <td><span class="role-badge ${roleClass}">${role}</span></td>
-		  <td>${nomeFormatado}</td>
-		  <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
-		  <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
-		  <td>${matchs}</td>
-		  <td>${diasClan}</td>
-		  <td><a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a></td>
-		`;
+        tr.innerHTML = `
+          <td><span class="role-badge ${roleClass}">${role}</span></td>
+          <td>${nomeFormatado}</td>
+          <td><span class="elo-pill ${soloClass}">${soloFormatted}</span></td>
+          <td><span class="elo-pill ${teamClass}">${teamFormatted}</span></td>
+          <td class="matches-cell">${matchs}</td>
+          <td>${diasClan}</td>
+          <td><a class="aoe-link" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a></td>
+        `;
 
         tbody.appendChild(tr);
+
+        // 🎯 Aplica a cor na célula de partidas
+        const matchesTd = tr.querySelector(".matches-cell");
+        aplicarCorPartidas(matchesTd, matchs);
       });
 
       // 🔹 Monta o card de contagem com APENAS 4 blocos
@@ -927,6 +927,7 @@ card.appendChild(partidasSpan);
   
 </body>
 </html>
+
 
 
 
