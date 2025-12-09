@@ -593,10 +593,6 @@
     color: #ff3b30; /* vermelho */
     font-weight: bold;
 }
-.partidas-amarelo {
-    color: #ffcc00; /* amarelo */
-    font-weight: bold;
-}
 .partidas-verde {
     color: #32d74b; /* verde */
     font-weight: bold;
@@ -778,11 +774,26 @@
 
     if (isNaN(numero)) return; // ignora se não for número
 
+    // reseta classes para evitar “sujeira” visual se reaplicar
+    elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
+    elemento.style.color = "";
+    elemento.style.fontWeight = "bold";
+
     if (numero === 0) {
+      // 🔴 0 partidas = vermelho fixo
       elemento.classList.add("partidas-vermelho");
     } else if (numero < 30) {
-      elemento.classList.add("partidas-amarelo");
+      // 🔥 1 a 29 → degradê de vermelho para amarelo
+      // t vai de 0 (1 partida) a 1 (29 partidas)
+      const t = (numero - 1) / 28; 
+      // Hue: 0 (vermelho) → 50 (amarelado)
+      const hue = 0 + 50 * t;
+      const saturation = 100;
+      const lightness = 50;
+
+      elemento.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     } else {
+      // 🟢 30+ partidas = verde
       elemento.classList.add("partidas-verde");
     }
   }
@@ -802,7 +813,6 @@
   };
 
   // Agrupamento lógico para o CARD de Distribuição
-  // (Reserva + Série B + Recruta → "ReservasRecrutas"; Manager + Staff → "Management")
   const roleGroupMap = {
     "Coach":   "Coach",
     "Titular": "Titular",
@@ -883,9 +893,9 @@
           nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
         }
 
-        const roleClass   = roleClassMap[role] || "sub";
-        const soloClass   = getEloClass(soloStatus);
-        const teamClass   = getEloClass(teamStatus);
+        const roleClass     = roleClassMap[role] || "sub";
+        const soloClass     = getEloClass(soloStatus);
+        const teamClass     = getEloClass(teamStatus);
         const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
         const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
 
@@ -923,10 +933,10 @@
     })
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
-
   
 </body>
 </html>
+
 
 
 
