@@ -33,8 +33,6 @@
       line-height: 1.6;
     }
 
-    /* HEADER FIXO */
-
     header {
       position: fixed;
       top: 0;
@@ -104,12 +102,10 @@
       }
     }
 
-    /* CONTEÚDO PRINCIPAL */
-
     main {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 110px 20px 40px; /* padding-top compensa o header fixo */
+      padding: 110px 20px 40px;
     }
 	
 	.logo-big-card {
@@ -212,7 +208,6 @@
 		font-weight: 700;
 	}
 
-/* CARD DO ÚLTIMO VÍDEO */
 .youtube-card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -230,11 +225,10 @@
   text-shadow: 0 0 14px rgba(0, 255, 120, 0.25);
 }
 
-/* FRAME RESPONSIVO */
 .youtube-frame-container {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 */
+  padding-bottom: 56.25%;
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 255, 120, 0.15);
@@ -249,7 +243,6 @@
   border-radius: 14px;
 }
 
-/* IMBR neon alternando verde ↔ amarelo */
 .imbr-pulse {
   font-weight: 900;
   animation: pulseIMBR 1.6s infinite ease-in-out;
@@ -269,9 +262,6 @@
     text-shadow: 0 0 6px #00ff5e;
   }
 }
-
-
-    /* TABELA DA LINEUP */
 
     .lineup-card {
       background: var(--bg-card);
@@ -391,15 +381,15 @@
 
 	@keyframes pulseIMBR {
 		0% {
-			color: #00ff5e;            /* verde neon */
+			color: #00ff5e;
 			-shadow: 0 0 6px #00ff5e;
 		}
 		50% {
-			color: #ffe600;            /* amarelo neon */
+			color: #ffe600;
 			text-shadow: 0 0 10px #ffe600;
 		}
 		100% {
-			color: #00ff5e;            /* volta ao verde */
+			color: #00ff5e;
 			text-shadow: 0 0 6px #00ff5e;
 		}
 	}
@@ -445,23 +435,21 @@
 
 .elo-pill {
   display: inline-flex;
-  flex-direction: column; /* Permite 2 linhas dentro */
-  align-items: center;    /* Centraliza horizontal */
-  justify-content: center;/* Centraliza vertical */
-  text-align: center;     /* Garantia extra */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   line-height: 1.25;
   padding: 6px 12px;
-  min-width: 120px;       /* Mais espaço → melhor estética */
-  max-width: 180px;       /* Evita ficar gigante */
+  min-width: 120px;
+  max-width: 180px;
   border-radius: 999px;
   font-size: 0.82rem;
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.12);
-  white-space: normal;    /* Permite quebra */
+  white-space: normal;
 }
 
-
-	/* Cores por ELO */
 .elo-conqueror {
   background: rgba(255, 120, 0, 0.25);
   color: #ffae42;
@@ -539,7 +527,6 @@
   margin-bottom: 20px;
 }
 
-/* AGORA SEM SLIDER: centralizado, podendo quebrar linha se precisar */
 .roles-count-grid {
   display: flex;
   flex-wrap: wrap;
@@ -569,7 +556,6 @@
   color: var(--accent-green);
 }
 
-/* Cores batendo com as badges da lineup */
 .role-count-box.coach {
   border-color: rgba(28,126,214,0.7);
   background: rgba(28,126,214,0.18);
@@ -590,14 +576,13 @@
   background: rgba(190,75,219,0.14);
 }
 .partidas-vermelho {
-    color: #ff3b30; /* vermelho */
+    color: #ff3b30;
     font-weight: bold;
 }
 .partidas-verde {
-    color: #32d74b; /* verde */
+    color: #32d74b;
     font-weight: bold;
 }
-
   .champ-card {
     background: #0b1020;
     border-radius: 20px;
@@ -646,8 +631,6 @@
   .pos1 { color: #f5c542; font-weight: bold; }
   .pos2 { color: #1c7ed6; font-weight: bold; }
   .pos3 { color: #00b36b; font-weight: bold; }
-	  
-    /* FOOTER */
 
     footer {
       max-width: 1100px;
@@ -769,19 +752,12 @@
 <section class="roles-count-card" id="roles-count-card">
   <h2 class="roles-count-title">📊 Distribuição por Cargo</h2>
   <p class="roles-count-sub">Resumo dos membros do clã de acordo com suas funções</p>
-
-  <div class="roles-count-grid" id="roles-count-grid">
-    <!-- Os cards serão inseridos via JavaScript -->
-  </div>
+  <div class="roles-count-grid" id="roles-count-grid"></div>
 </section>
 
 <div class="champ-card">
   <h2>🏆 Último Campeonato IMBR – Classificação Final</h2>
-
-  <!-- IMAGEM DA BRACKET -->
   <img src="bracket-imbr.jpg" alt="Bracket do último campeonato IMBR">
-
-  <!-- TABELA DE PONTOS -->
   <table class="champ-table">
     <tr>
       <th>Posição</th>
@@ -839,9 +815,7 @@
 			</thead>
 
 			<tbody id="lineup-body">
-				<!-- Linhas serão inseridas via JavaScript -->
 			</tbody>
-
 
         </table>
       </div>
@@ -853,42 +827,32 @@
   </footer>
   
 <script>
-  // 🎨 Função para aplicar cor na célula de partidas (últimos 30 dias)
   function aplicarCorPartidas(elemento, valor) {
     if (valor == null) return;
 
     const numero = parseInt(valor.toString().replace("+", ""));
 
-    if (isNaN(numero)) return; // ignora se não for número
-
-    // reseta classes para evitar “sujeira” visual se reaplicar
+    if (isNaN(numero)) return;
     elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
     elemento.style.color = "";
     elemento.style.fontWeight = "bold";
 
     if (numero === 0) {
-      // 🔴 0 partidas = vermelho fixo
       elemento.classList.add("partidas-vermelho");
     } else if (numero < 30) {
-      // 🔥 1 a 29 → degradê de vermelho para amarelo
-      // t vai de 0 (1 partida) a 1 (29 partidas)
       const t = (numero - 1) / 28; 
-      // Hue: 0 (vermelho) → 50 (amarelado)
       const hue = 0 + 50 * t;
       const saturation = 100;
       const lightness = 50;
 
       elemento.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     } else {
-      // 🟢 30+ partidas = verde
       elemento.classList.add("partidas-verde");
     }
   }
 
-  // URL CSV publicado do Google Sheets
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-  // Classes visuais da badge na TABELA (lineup)
   const roleClassMap = {
     "Coach":   "coach",
     "Titular": "main",
@@ -899,7 +863,6 @@
     "Staff":   "staff"
   };
 
-  // Agrupamento lógico para o CARD de Distribuição
   const roleGroupMap = {
     "Coach":   "Coach",
     "Titular": "Titular",
@@ -910,7 +873,6 @@
     "Staff":   "Management"
   };
 
-  // Contadores por grupo (apenas 4 blocos)
   const roleCounters = {
     "Coach":            0,
     "Titular":          0,
@@ -918,7 +880,6 @@
     "Management":       0
   };
 
-  // Ordem e aparência dos blocos
   const roleGroupsOrder = [
     { key: "Coach",            label: "Coach",              className: "coach" },
     { key: "Titular",          label: "Titular",            className: "main" },
@@ -926,7 +887,6 @@
     { key: "Management",       label: "Staff",              className: "staff" }
   ];
 
-  // Detecta classe de cor do elo
   function getEloClass(texto) {
     const t = (texto || "").toLowerCase();
     if (t.includes("conquer")) return "elo-conqueror";
@@ -948,7 +908,6 @@
       const lines = csvText.trim().split("\n");
       if (lines.length <= 1) return;
 
-      // Pula a primeira linha (cabeçalho)
       lines.slice(1).forEach(line => {
         if (!line.trim()) return;
 
@@ -961,15 +920,13 @@
         const diasClan   = (cols[5] || "").trim();
         const perfilUrl  = (cols[6] || "#").trim();
 
-        if (!nome) return; // ignora linha vazia
+        if (!nome) return;
 
-        // 🔢 Soma no grupo certo para o card
         const groupKey = roleGroupMap[role];
         if (groupKey && roleCounters.hasOwnProperty(groupKey)) {
           roleCounters[groupKey] += 1;
         }
 
-        // Formatação especial do nome quando começa com IMBR
         let nomeFormatado = nome;
         const upperNome = nome.toUpperCase();
         if (upperNome.startsWith("IMBR")) {
@@ -986,7 +943,6 @@
         const soloFormatted = soloStatus.replace(" - ", `<span class="elo-break">`);
         const teamFormatted = teamStatus.replace(" - ", `<span class="elo-break">`);
 
-        // Linha da tabela da lineup
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><span class="role-badge ${roleClass}">${role}</span></td>
@@ -1000,12 +956,10 @@
 
         tbody.appendChild(tr);
 
-        // 🎯 Aplica a cor na célula de partidas
         const matchesTd = tr.querySelector(".matches-cell");
         aplicarCorPartidas(matchesTd, matchs);
       });
 
-      // 🔹 Monta o card de contagem com APENAS 4 blocos
       roleGroupsOrder.forEach(group => {
         const total = roleCounters[group.key] ?? 0;
 
@@ -1023,6 +977,7 @@
   
 </body>
 </html>
+
 
 
 
