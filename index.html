@@ -589,7 +589,18 @@
   border-color: rgba(190,75,219,0.7);
   background: rgba(190,75,219,0.14);
 }
-
+.partidas-vermelho {
+    color: #ff3b30; /* vermelho */
+    font-weight: bold;
+}
+.partidas-amarelo {
+    color: #ffcc00; /* amarelo */
+    font-weight: bold;
+}
+.partidas-verde {
+    color: #32d74b; /* verde */
+    font-weight: bold;
+}
     /* FOOTER */
 
     footer {
@@ -759,6 +770,26 @@
   </footer>
   
 <script>
+	function aplicarCorPartidas(elemento, valor) {
+	const numero = parseInt(valor.toString().replace("+",""));
+    if (isNaN(numero)) return; // ignora se não for número
+
+    if (numero === 0) {
+        elemento.classList.add("partidas-vermelho");
+    } else if (numero < 30) {
+        elemento.classList.add("partidas-amarelo");
+    } else {
+        elemento.classList.add("partidas-verde");
+    }
+}
+	const partidasSpan = document.createElement("span");
+partidasSpan.textContent = player.matches_last_30d;
+
+// aplica a cor automaticamente
+aplicarCorPartidas(partidasSpan, player.matches_last_30d);
+
+card.appendChild(partidasSpan);
+
   // URL CSV publicado do Google Sheets
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
@@ -896,6 +927,7 @@
   
 </body>
 </html>
+
 
 
 
