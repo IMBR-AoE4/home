@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMBR – Recrutas Ativos</title>
+
+  <style>
+    /* IMPORTANTE: copie o mesmo CSS do seu index.html */
+    body {
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(circle at top, #13315c 0, #050816 50%, #02040a 100%);
+      color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      padding: 18px;
+      background: rgba(0,20,40,0.85);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: .1rem;
+    }
+
+    .lineup-card {
+      max-width: 1100px;
+      margin: 40px auto;
+      background: #0b1020;
+      padding: 26px;
+      border-radius: 20px;
+      border: 1px solid #252a3a;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+    }
+
+    .lineup-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+
+    thead {
+      background: rgba(0,179,107,0.25);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+    .role-badge {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: .75rem;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #ccc;
+    }
+
+    .matches-green { color: #00ff80; font-weight: bold; }
+    .matches-red { color: #ff4040; font-weight: bold; }
+    .matches-mid { font-weight: bold; }
+  </style>
+</head>
+
+<body>
+
+<header>IMBR · Recrutas Ativos</header>
+
+<section class="lineup-card">
+  <h2 class="lineup-title">Recrutas com menos de 30 jogos</h2>
+  <p>Filtro automático baseado na planilha oficial do Clan IMBR.</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Jogador</th>
+          <th>Partidas (30d)</th>
+          <th>Dias no Clan</th>
+          <th>Perfil</th>
+        </tr>
+      </thead>
+      <tbody id="recrutas-body"></tbody>
+    </table>
+  </div>
+</section>
+
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+
+// Função de cor das partidas
+function colorMatches(td, value) {
+  const n = parseInt(value.replace("+","").trim());
+  if (isNaN(n)) return;
+
+  if (n === 0) td.classList.add("matches-red");
+  else if (n < 30) td.classList.add("matches-mid");
+  else td.classList.add("matches-green");
+}
+
+fetch(CSV_URL)
+  .then(r => r.text())
+  .then(csv => {
+    const tbody = document.getElementById("recrutas-body");
+    const linhas = csv.trim().split("\n").slice(1);
+
+    linhas.forEach(linha => {
+      const cols = linha.split(",");
+      const nome   = cols[0].trim();
+      const role   = cols[1].trim();
+      const jogos  = cols[4].trim();
+      const dias   = cols[5].trim();
+      const perfil = cols[6].trim();
+
+      if (!nome) return;
+
+      const partidas = parseInt(jogos.replace("+","").trim());
+
+      // FILTRO DA NOVA PÁGINA
+      if (role === "Recruta" && partidas < 30) {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${nome}</td>
+          <td class="match-cell">${jogos}</td>
+          <td>${dias}</td>
+          <td><a href="${perfil}" target="_blank" style="color:#f5c542">Ver perfil</a></td>
+        `;
+
+        tbody.appendChild(tr);
+
+        // aplicar cor
+        colorMatches(tr.querySelector(".match-cell"), jogos);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
