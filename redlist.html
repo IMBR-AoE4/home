@@ -30,6 +30,7 @@
 </header>
 
 
+
  <main>
     <section class="lineup-card">
       <div class="lineup-header">
@@ -75,12 +76,11 @@
     document.body.classList.remove("menu-open");
   }
 
-  // Fecha com ESC
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       closeMenu();
     }
-  });
+
 
 
 
@@ -149,6 +149,7 @@
   </script>
 
 <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+
 <nav id="side-menu" class="side-menu" aria-label="Menu principal">
   <div class="side-menu-header">
     <span>Menu IMBR</span>
@@ -160,6 +161,7 @@
   <a href="index.html#duelos">⚔️ Duelos</a>
   <a href="index.html#campeonatos">🏆 Campeonatos</a>
 </nav>
+
 
 
 </body>
