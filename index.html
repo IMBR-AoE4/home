@@ -10,8 +10,8 @@
 
 <body>
 <header>
-  <a href="index.html" style="text-decoration:none; color:inherit;">
-    <div class="header-inner">
+  <div class="header-inner">
+    <a href="index.html" class="logo-link">
       <div class="logo-box">
         <img src="imbr-logo.png" alt="Logo Clan IMBR" />
         <div>
@@ -19,12 +19,14 @@
           <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
         </div>
       </div>
-      <div class="menu-icon" onclick="toggleMenu()">☰</div>
-
-    </div>
-  </a>
+    </a>
+    <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
 </header>
-
 
   <main>
 
@@ -193,10 +195,21 @@
 <script>
 
 
-function toggleMenu() {
-  const menu = document.getElementById("floating-menu");
-  menu.classList.toggle("show");
-}
+  function toggleMenu() {
+    document.body.classList.toggle("menu-open");
+  }
+
+  function closeMenu() {
+    document.body.classList.remove("menu-open");
+  }
+
+  // Fecha com ESC
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      closeMenu();
+    }
+  });
+
 
 	
   function aplicarCorPartidas(elemento, valor) {
@@ -347,17 +360,22 @@ function toggleMenu() {
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
 
-<nav id="floating-menu" class="floating-menu">
+<div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+<nav id="side-menu" class="side-menu" aria-label="Menu principal">
+  <div class="side-menu-header">
+    <span>Menu IMBR</span>
+    <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+  </div>
   <a href="index.html">🏠 Home</a>
-  <a href="lineup.html">👥 Lineup</a>
-  <a href="redlist.html">🟡 Recrutas</a>
-  <a href="#duelos">⚔️ Duelos</a>
-  <a href="#campeonatos">🏆 Campeonatos</a>
-  <a href="#contato">📩 Contato</a>
+  <a href="index.html#lineup">👥 Lineup & Staff</a>
+  <a href="redlist.html">🟡 Recrutas Ativos</a>
+  <a href="index.html#duelos">⚔️ Duelos</a>
+  <a href="index.html#campeonatos">🏆 Campeonatos</a>
 </nav>
   
 </body>
 </html>
+
 
 
 
