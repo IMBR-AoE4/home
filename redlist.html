@@ -65,9 +65,8 @@
     <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
   </footer>
 
-  <script>
-
-
+<script>
+  // MENU
   function toggleMenu() {
     document.body.classList.toggle("menu-open");
   }
@@ -76,77 +75,78 @@
     document.body.classList.remove("menu-open");
   }
 
+  // Fecha com ESC
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       closeMenu();
     }
+  });
 
+  // ----------------- RECRUTAS / PLANILHA -----------------
 
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
+  // mesma função do index
+  function aplicarCorPartidas(elemento, valor) {
+    if (valor == null) return;
 
-    
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+    const numero = parseInt(valor.toString().replace("+", ""));
 
-    // MESMA FUNÇÃO DO INDEX (usa partidas-vermelho / partidas-verde já do CSS)
-    function aplicarCorPartidas(elemento, valor) {
-      if (valor == null) return;
+    if (isNaN(numero)) return;
+    elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
+    elemento.style.color = "";
+    elemento.style.fontWeight = "bold";
 
-      const numero = parseInt(valor.toString().replace("+", ""));
+    if (numero === 0) {
+      elemento.classList.add("partidas-vermelho");
+    } else if (numero < 30) {
+      const t = (numero - 1) / 28;
+      const hue = 0 + 50 * t;
+      const saturation = 100;
+      const lightness = 50;
 
-      if (isNaN(numero)) return;
-      elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
-      elemento.style.color = "";
-      elemento.style.fontWeight = "bold";
-
-      if (numero === 0) {
-        elemento.classList.add("partidas-vermelho");
-      } else if (numero < 30) {
-        const t = (numero - 1) / 28;
-        const hue = 0 + 50 * t;
-        const saturation = 100;
-        const lightness = 50;
-
-        elemento.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-      } else {
-        elemento.classList.add("partidas-verde");
-      }
+      elemento.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    } else {
+      elemento.classList.add("partidas-verde");
     }
+  }
 
-    fetch(CSV_URL)
-      .then(r => r.text())
-      .then(csv => {
-        const tbody = document.getElementById("recrutas-body");
-        const linhas = csv.trim().split("\n").slice(1);
+  fetch(CSV_URL)
+    .then(r => r.text())
+    .then(csv => {
+      const tbody = document.getElementById("recrutas-body");
+      const linhas = csv.trim().split("\n").slice(1);
 
-        linhas.forEach(linha => {
-          const cols = linha.split(",");
-          const nome   = (cols[0] || "").trim();
-          const role   = (cols[1] || "").trim();
-          const jogos  = (cols[4] || "").trim();
-          const dias   = (cols[5] || "").trim();
-          const perfil = (cols[6] || "").trim();
+      linhas.forEach(linha => {
+        const cols = linha.split(",");
+        const nome   = (cols[0] || "").trim();
+        const role   = (cols[1] || "").trim();
+        const jogos  = (cols[4] || "").trim();
+        const dias   = (cols[5] || "").trim();
+        const perfil = (cols[6] || "").trim();
 
-          if (!nome) return;
+        if (!nome) return;
 
-          const partidas = parseInt(jogos.replace("+","").trim());
+        const partidas = parseInt(jogos.replace("+","").trim());
 
-          // FILTRO: só Recruta com menos de 30 partidas
-          if (role === "Recruta" && partidas < 30) {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${nome}</td>
-              <td class="matches-cell">${jogos}</td>
-              <td>${dias}</td>
-              <td><a class="aoe-link" href="${perfil}" target="_blank" rel="noopener">Ver perfil</a></td>
-            `;
-            tbody.appendChild(tr);
+        // FILTRO: só Recruta com menos de 30 partidas
+        if (role === "Recruta" && partidas < 30) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${nome}</td>
+            <td class="matches-cell">${jogos}</td>
+            <td>${dias}</td>
+            <td><a class="aoe-link" href="${perfil}" target="_blank" rel="noopener">Ver perfil</a></td>
+          `;
+          tbody.appendChild(tr);
 
-            const matchesTd = tr.querySelector(".matches-cell");
-            aplicarCorPartidas(matchesTd, jogos);
-          }
-        });
+          const matchesTd = tr.querySelector(".matches-cell");
+          aplicarCorPartidas(matchesTd, jogos);
+        }
       });
-  </script>
+    });
+</script>
+
 
 <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
 
