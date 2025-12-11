@@ -194,8 +194,7 @@
   </footer>
   
 <script>
-
-
+  // MENU
   function toggleMenu() {
     document.body.classList.toggle("menu-open");
   }
@@ -209,9 +208,10 @@
     if (e.key === "Escape") {
       closeMenu();
     }
+  });
 
+  // --------------- LINEUP / PLANILHA ------------------
 
-	
   function aplicarCorPartidas(elemento, valor) {
     if (valor == null) return;
 
@@ -360,6 +360,7 @@
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
 </script>
 
+
 <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
 
 <nav id="side-menu" class="side-menu" aria-label="Menu principal">
@@ -377,6 +378,7 @@
   
 </body>
 </html>
+
 
 
 
