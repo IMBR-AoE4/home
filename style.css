@@ -638,3 +638,59 @@
     footer span {
       opacity: 0.7;
     }
+
+.menu-icon {
+  font-size: 26px;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: 0.2s;
+  user-select: none;
+  color: #f5f5f5;
+  margin-left: auto;
+}
+
+.menu-icon:hover {
+  background: rgba(255,255,255,0.07);
+}
+
+/* Menu flutuante */
+.floating-menu {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #0b1020;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+  padding: 14px 0;
+  width: 210px;
+  display: none;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.floating-menu a {
+  display: block;
+  padding: 12px 20px;
+  color: #e5e5e5;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.floating-menu a:hover {
+  background: rgba(0,179,107,0.2);
+  color: #00ff99;
+}
+
+/* animação de fade */
+.floating-menu.show {
+  display: flex;
+  animation: menuFade 0.25s ease-out;
+}
+
+@keyframes menuFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
