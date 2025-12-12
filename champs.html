@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMBR – Campeonatos</title>
+
+  <!-- MESMO CSS DO SITE -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- CSS extra só para essa página -->
+  <style>
+    .page-header {
+      margin-bottom: 18px;
+    }
+
+    .tournaments-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .tournaments-grid { grid-template-columns: 1fr; }
+    }
+
+    .tournament-card {
+      background: rgba(11,16,32,0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+
+    .tournament-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tournament-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+
+    .tournament-meta {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.72);
+    }
+
+    .tournament-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-challonge {
+      background: rgba(245,197,66,0.14);
+      border: 1px solid rgba(245,197,66,0.55);
+      color: #ffe083;
+    }
+    .btn-challonge:hover { background: rgba(245,197,66,0.22); }
+
+    .btn-toggle {
+      background: rgba(0,179,107,0.10);
+      border: 1px solid rgba(0,179,107,0.40);
+      color: rgba(245,245,245,0.92);
+    }
+    .btn-toggle:hover { background: rgba(0,179,107,0.16); }
+
+    .embed-wrap {
+      padding: 14px;
+      display: none;
+    }
+    .embed-wrap.open { display: block; }
+
+    .embed-frame {
+      width: 100%;
+      height: 720px;
+      border: 0;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.20);
+    }
+
+    .tournament-note {
+      padding: 0 16px 16px;
+      font-size: 0.85rem;
+      color: rgba(245,245,245,0.70);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER PADRÃO COM MENU (IGUAL AO SEU) -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <div class="logo-box">
+          <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+          <div>
+            <div class="logo-text-main">IMBR</div>
+            <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+          </div>
+        </div>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Overlay + Menu lateral (IGUAL AO SEU) -->
+  <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
+    <div class="side-menu-header">
+      <span>Menu IMBR</span>
+      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+    </div>
+    <a href="index.html">🏠 Home</a>
+    <a href="team.html">👥 Lineup</a>
+    <a href="redlist.html">🔴 Redlist</a>
+    <a href="index.html#duelos">⚔ Duelos</a>
+    <a href="index.html#campeonatos">🏆 Campeonatos</a>
+  </nav>
+
+  <main>
+    <section class="lineup-card">
+      <div class="lineup-header page-header">
+        <div>
+          <h2 class="lineup-title">Campeonatos</h2>
+          <p class="lineup-sub">
+            Últimos torneios do IMBR no Challonge. Abra a bracket para ver partidas, andamento e resultados finais.
+          </p>
+        </div>
+        <div class="role-pill">
+          <span class="role-dot"></span> Brackets embedadas
+        </div>
+      </div>
+
+      <div class="tournaments-grid">
+
+        <!-- Torneio 1 -->
+        <article class="tournament-card" data-card>
+          <div class="tournament-head">
+            <div>
+              <h3 class="tournament-title">Campeonato IMBR #1</h3>
+              <div class="tournament-meta">challonge.com/pt_BR/8pght9hy</div>
+            </div>
+
+            <div class="tournament-actions">
+              <a class="btn btn-challonge" href="https://challonge.com/pt_BR/8pght9hy" target="_blank" rel="noopener">
+                Abrir no Challonge
+              </a>
+              <button class="btn btn-toggle" type="button" data-toggle>
+                Mostrar bracket
+              </button>
+            </div>
+          </div>
+
+          <div class="embed-wrap" data-embed>
+            <iframe
+              class="embed-frame"
+              loading="lazy"
+              allowtransparency="true"
+              scrolling="auto"
+              src="https://challonge.com/8pght9hy/module?scale_to_fit=1&show_tournament_name=1&show_final_results=1">
+            </iframe>
+          </div>
+
+          <div class="tournament-note">
+            Se precisar de mais altura, aumente <strong>height</strong> do iframe no CSS.
+          </div>
+        </article>
+
+        <!-- Torneio 2 -->
+        <article class="tournament-card" data-card>
+          <div class="tournament-head">
+            <div>
+              <h3 class="tournament-title">Campeonato IMBR #2</h3>
+              <div class="tournament-meta">challonge.com/pt_BR/si02imbr</div>
+            </div>
+
+            <div class="tournament-actions">
+              <a class="btn btn-challonge" href="https://challonge.com/pt_BR/si02imbr" target="_blank" rel="noopener">
+                Abrir no Challonge
+              </a>
+              <button class="btn btn-toggle" type="button" data-toggle>
+                Mostrar bracket
+              </button>
+            </div>
+          </div>
+
+          <div class="embed-wrap" data-embed>
+            <iframe
+              class="embed-frame"
+              loading="lazy"
+              allowtransparency="true"
+              scrolling="auto"
+              src="https://challonge.com/si02imbr/module?scale_to_fit=1&show_tournament_name=1&show_final_results=1">
+            </iframe>
+          </div>
+
+          <div class="tournament-note">
+            Resultado final aparece no topo quando o torneio estiver concluído.
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
+  </footer>
+
+  <script>
+    // MENU (IGUAL AO SEU)
+    function toggleMenu() { document.body.classList.toggle("menu-open"); }
+    function closeMenu() { document.body.classList.remove("menu-open"); }
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+
+    // TOGGLE dos embeds
+    document.querySelectorAll("[data-card]").forEach(card => {
+      const btn = card.querySelector("[data-toggle]");
+      const wrap = card.querySelector("[data-embed]");
+
+      btn.addEventListener("click", () => {
+        const open = wrap.classList.toggle("open");
+        btn.textContent = open ? "Esconder bracket" : "Mostrar bracket";
+      });
+    });
+  </script>
+
+</body>
+</html>
