@@ -9,22 +9,15 @@
 
   <!-- CSS extra só para os cards -->
   <style>
-    .roster-header {
-      margin-bottom: 18px;
-    }
+    .roster-header { margin-bottom: 18px; }
 
     .roster-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
-
-    @media (max-width: 980px) {
-      .roster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 620px) {
-      .roster-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 980px) { .roster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) { .roster-grid { grid-template-columns: 1fr; } }
 
     .player-card {
       background: rgba(11,16,32,0.96);
@@ -34,94 +27,122 @@
       padding: 16px;
       transition: transform .18s ease, border-color .18s ease, background .18s ease;
     }
-
     .player-card:hover {
       transform: translateY(-2px);
       border-color: rgba(0,179,107,0.35);
       background: rgba(0,179,107,0.08);
     }
 
-    .player-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+    .player-card-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
     }
 
-    .player-name {
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
+    .player-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
     }
 
-    .player-meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 12px 0 10px;
-    }
-
-    .meta-block {
+    .avatar{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,0.12);
       background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 10px;
+      flex: 0 0 auto;
     }
 
-    .meta-label {
-      font-size: 0.72rem;
+    .player-name-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width: 0;
+    }
+
+    .player-name{
+      font-size:1.05rem;
+      font-weight:800;
+      letter-spacing:0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 230px;
+    }
+
+    .player-sub{
+      font-size:0.78rem;
+      color: rgba(245,245,245,0.68);
+    }
+
+    .player-meta{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin:12px 0 10px;
+    }
+
+    .meta-block{
+      background: rgba(0,0,0,0.25);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:14px;
+      padding:10px;
+    }
+
+    .meta-label{
+      font-size:0.72rem;
       color: rgba(245,245,245,0.72);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 6px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      margin-bottom:6px;
     }
 
-    .meta-value {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+    .meta-value{
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
     }
 
-    .player-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.08);
+    .player-bottom{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid rgba(255,255,255,0.08);
     }
 
-    .mini-stat {
-      font-size: 0.9rem;
+    .mini-stat{
+      font-size:0.9rem;
       color: rgba(245,245,245,0.85);
     }
+    .mini-stat strong{ color:#f5f5f5; font-weight:800; }
 
-    .mini-stat strong {
-      color: #f5f5f5;
-      font-weight: 800;
-    }
-
-    .profile-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 12px;
-      border-radius: 12px;
-      text-decoration: none;
+    .profile-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:12px;
+      text-decoration:none;
       background: rgba(245,197,66,0.14);
-      border: 1px solid rgba(245,197,66,0.55);
-      color: #ffe083;
-      font-weight: 700;
-      font-size: 0.9rem;
+      border:1px solid rgba(245,197,66,0.55);
+      color:#ffe083;
+      font-weight:700;
+      font-size:0.9rem;
       transition: transform .15s ease, background .15s ease;
-      white-space: nowrap;
+      white-space:nowrap;
+      flex: 0 0 auto;
     }
-
-    .profile-btn:hover {
+    .profile-btn:hover{
       transform: translateY(-1px);
       background: rgba(245,197,66,0.22);
     }
@@ -150,18 +171,17 @@
 
   <!-- Overlay + Menu lateral -->
   <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
-<nav id="side-menu" class="side-menu" aria-label="Menu principal">
-  <div class="side-menu-header">
-    <span>Menu IMBR</span>
-    <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
-  </div>
-  <a href="index.html">🏠 Home</a>
-  <a href="team.html">👥 Lineup</a>
-  <a href="redlist.html">🔴 Redlist</a>
-  <a href="index.html#duelos">⚔ Duelos</a>
+  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
+    <div class="side-menu-header">
+      <span>Menu IMBR</span>
+      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+    </div>
+    <a href="index.html">🏠 Home</a>
+    <a href="team.html">👥 Lineup</a>
+    <a href="redlist.html">🔴 Redlist</a>
+    <a href="index.html#duelos">⚔ Duelos</a>
     <a href="champs.html">🏆 Campeonatos</a>
-</nav>
-
+  </nav>
 
   <main>
     <section class="lineup-card">
@@ -169,7 +189,7 @@
         <div>
           <h2 class="lineup-title">Titulares & Reservas</h2>
           <p class="lineup-sub">
-            Cards dinâmicos com <strong>Titulares</strong>, <strong>Reservas</strong> e <strong>Série B</strong>.
+            Cards dinâmicos com <strong>Titulares</strong>, <strong>Reservas</strong> e <strong>Coach</strong>.
           </p>
         </div>
         <div class="role-pill">
@@ -197,6 +217,68 @@
   // FILTRO + ORDEM
   const ALLOWED_ROLES = new Set(["Titular", "Reserva", "Coach"]);
   const ROLE_ORDER = ["Titular", "Reserva", "Coach"];
+
+  // Avatar: extrai ID do link e busca na API (com cache)
+  function extractProfileId(perfilUrl) {
+    if (!perfilUrl) return null;
+    const m = perfilUrl.match(/\/players\/(\d+)/i);
+    return m ? m[1] : null;
+  }
+
+  const avatarCache = new Map();
+
+  function getAvatarFromLocal(profileId) {
+    try {
+      const raw = localStorage.getItem(`imbr_avatar_${profileId}`);
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      if (!obj?.url || !obj?.ts) return null;
+      if (Date.now() - obj.ts > 24 * 60 * 60 * 1000) return null;
+      return obj.url;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveAvatarToLocal(profileId, url) {
+    try {
+      localStorage.setItem(`imbr_avatar_${profileId}`, JSON.stringify({ url, ts: Date.now() }));
+    } catch {}
+  }
+
+  async function fetchAvatarUrl(profileId) {
+    if (!profileId) return null;
+
+    if (avatarCache.has(profileId)) return avatarCache.get(profileId);
+
+    const cached = getAvatarFromLocal(profileId);
+    if (cached) {
+      avatarCache.set(profileId, cached);
+      return cached;
+    }
+
+    try {
+      const r = await fetch(`https://aoe4world.com/api/v0/players/${profileId}`);
+      if (!r.ok) return null;
+      const data = await r.json();
+
+      const url =
+        data?.player?.steam_avatar ||
+        data?.player?.avatar ||
+        data?.steam_avatar ||
+        data?.avatar ||
+        null;
+
+      if (url) {
+        avatarCache.set(profileId, url);
+        saveAvatarToLocal(profileId, url);
+      }
+
+      return url;
+    } catch {
+      return null;
+    }
+  }
 
   function aplicarCorPartidas(elemento, valor) {
     if (valor == null) return;
@@ -248,7 +330,7 @@
 
   fetch(CSV_URL)
     .then(r => r.text())
-    .then(csv => {
+    .then(async csv => {
       const grid = document.getElementById("roster-grid");
       if (!grid) return;
 
@@ -262,13 +344,17 @@
 
       linhas.forEach(linha => {
         const cols = linha.split(",");
+
         const nome       = (cols[0] || "").trim();
         const role       = (cols[1] || "").trim();
         const soloStatus = (cols[2] || "").trim();
-        const teamStatus = (cols[3] || "").trim();
-        const matchs     = (cols[4] || "").trim();
-        const diasClan   = (cols[5] || "").trim();
-        const perfilUrl  = (cols[6] || "#").trim();
+
+        // ✅ COLUNA D = link do perfil
+        const perfilUrl  = (cols[3] || "").trim();
+
+        const teamStatus = (cols[4] || "").trim();
+        const matchs     = (cols[5] || "").trim();
+        const diasClan   = (cols[6] || "").trim();
 
         if (!nome) return;
         if (!ALLOWED_ROLES.has(role)) return;
@@ -279,20 +365,32 @@
         });
       });
 
-      // limpa antes de renderizar (caso recarregue)
       grid.innerHTML = "";
 
-      ROLE_ORDER.forEach(role => {
-        playersByRole[role].forEach(player => {
+      for (const role of ROLE_ORDER) {
+        for (const player of playersByRole[role]) {
           const soloClass = getEloClass(player.soloStatus);
           const teamClass = getEloClass(player.teamStatus);
+
+          const pid = extractProfileId(player.perfilUrl);
+          const avatar = await fetchAvatarUrl(pid);
 
           const card = document.createElement("div");
           card.className = "player-card";
 
           card.innerHTML = `
             <div class="player-card-top">
-              <div class="player-name">${formatNomeIMBR(player.nome)}</div>
+              <div class="player-left">
+                <img class="avatar"
+                     src="${avatar || "imbr-logo.png"}"
+                     alt="Avatar"
+                     loading="lazy" />
+                <div class="player-name-wrap">
+                  <div class="player-name">${formatNomeIMBR(player.nome)}</div>
+                  <div class="player-sub">${pid ? "AoE4World ID: " + pid : "AoE4World"}</div>
+                </div>
+              </div>
+
               <span class="role-badge ${roleClass(role)}">${role}</span>
             </div>
 
@@ -318,17 +416,16 @@
                 <div>Dias no clan: <strong>${player.diasClan || "—"}</strong></div>
               </div>
 
-              <a class="profile-btn" href="${player.perfilUrl}" target="_blank" rel="noopener">
+              <a class="profile-btn" href="${player.perfilUrl || "#"}" target="_blank" rel="noopener">
                 Ver perfil
               </a>
             </div>
           `;
 
           grid.appendChild(card);
-
           aplicarCorPartidas(card.querySelector(".matches-cell"), player.matchs);
-        });
-      });
+        }
+      }
     })
     .catch(err => console.error("Erro ao carregar roster:", err));
 </script>
