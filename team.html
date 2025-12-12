@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMBR – Titulares & Reservas</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- CSS extra só para os cards -->
+  <style>
+    .roster-header {
+      margin-bottom: 18px;
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .roster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .roster-grid { grid-template-columns: 1fr; }
+    }
+
+    .player-card {
+      background: rgba(11,16,32,0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      padding: 16px;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .player-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0,179,107,0.35);
+      background: rgba(0,179,107,0.08);
+    }
+
+    .player-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .player-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .player-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 10px;
+    }
+
+    .meta-block {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .meta-label {
+      font-size: 0.72rem;
+      color: rgba(245,245,245,0.72);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .meta-value {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .player-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mini-stat {
+      font-size: 0.9rem;
+      color: rgba(245,245,245,0.85);
+    }
+
+    .mini-stat strong {
+      color: #f5f5f5;
+      font-weight: 800;
+    }
+
+    .profile-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      background: rgba(245,197,66,0.14);
+      border: 1px solid rgba(245,197,66,0.55);
+      color: #ffe083;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: transform .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+
+    .profile-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(245,197,66,0.22);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER PADRÃO COM MENU -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <div class="logo-box">
+          <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+          <div>
+            <div class="logo-text-main">IMBR</div>
+            <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+          </div>
+        </div>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Overlay + Menu lateral -->
+  <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
+    <div class="side-menu-header">
+      <span>Menu IMBR</span>
+      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+    </div>
+    <a href="index.html">🏠 Home</a>
+    <a href="roster.html">👥 Titulares & Reservas</a>
+    <a href="redlist.html">🟡 Recrutas Ativos</a>
+    <a href="index.html#duelos">⚔️ Duelos</a>
+    <a href="index.html#campeonatos">🏆 Campeonatos</a>
+  </nav>
+
+  <main>
+    <section class="lineup-card">
+      <div class="lineup-header roster-header">
+        <div>
+          <h2 class="lineup-title">Titulares & Reservas</h2>
+          <p class="lineup-sub">
+            Cards dinâmicos com <strong>Titulares</strong>, <strong>Reservas</strong> e <strong>Série B</strong>.
+          </p>
+        </div>
+        <div class="role-pill">
+          <span class="role-dot"></span> Atualização via planilha
+        </div>
+      </div>
+
+      <div id="roster-grid" class="roster-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
+  </footer>
+
+  <script>
+    // MENU
+    function toggleMenu() { document.body.classList.toggle("menu-open"); }
+    function closeMenu() { document.body.classList.remove("menu-open"); }
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+
+    // CSV
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+
+    // filtros
+    const ALLOWED_ROLES = new Set(["Titular", "Reserva", "Coach"]);
+
+    function aplicarCorPartidas(elemento, valor) {
+      if (valor == null) return;
+      const numero = parseInt(valor.toString().replace("+", ""));
+      if (isNaN(numero)) return;
+
+      elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
+      elemento.style.color = "";
+      elemento.style.fontWeight = "bold";
+
+      if (numero === 0) {
+        elemento.classList.add("partidas-vermelho");
+      } else if (numero < 30) {
+        const t = (numero - 1) / 28;
+        const hue = 0 + 50 * t;
+        elemento.style.color = `hsl(${hue}, 100%, 50%)`;
+      } else {
+        elemento.classList.add("partidas-verde");
+      }
+    }
+
+    function getEloClass(texto) {
+      const t = (texto || "").toLowerCase();
+      if (t.includes("conquer")) return "elo-conqueror";
+      if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
+      if (t.includes("plat")) return "elo-platinum";
+      if (t.includes("gold") || t.includes("ouro")) return "elo-gold";
+      if (t.includes("silver") || t.includes("prata")) return "elo-silver";
+      if (t.includes("bronze")) return "elo-bronze";
+      return "";
+    }
+
+    function formatNomeIMBR(nome) {
+      let nomeFormatado = nome;
+      const upperNome = (nome || "").toUpperCase();
+      if (upperNome.startsWith("IMBR")) {
+        let resto = nome.slice(4).trim();
+        if (resto.startsWith("|")) resto = resto.slice(1).trim();
+        nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
+      }
+      return nomeFormatado;
+    }
+
+    function roleClass(role) {
+      if (role === "Titular") return "main";
+      return "sub"; // Reserva / Serie B
+    }
+
+    fetch(CSV_URL)
+      .then(r => r.text())
+      .then(csv => {
+        const grid = document.getElementById("roster-grid");
+        const linhas = csv.trim().split("\n").slice(1);
+
+        linhas.forEach(linha => {
+          const cols = linha.split(",");
+          const nome       = (cols[0] || "").trim();
+          const role       = (cols[1] || "").trim();
+          const soloStatus = (cols[2] || "").trim();
+          const teamStatus = (cols[3] || "").trim();
+          const matchs     = (cols[4] || "").trim();
+          const diasClan   = (cols[5] || "").trim();
+          const perfilUrl  = (cols[6] || "#").trim();
+
+          if (!nome) return;
+          if (!ALLOWED_ROLES.has(role)) return;
+
+          const soloClass = getEloClass(soloStatus);
+          const teamClass = getEloClass(teamStatus);
+
+          const card = document.createElement("div");
+          card.className = "player-card";
+
+          card.innerHTML = `
+            <div class="player-card-top">
+              <div class="player-name">${formatNomeIMBR(nome)}</div>
+              <span class="role-badge ${roleClass(role)}">${role}</span>
+            </div>
+
+            <div class="player-meta">
+              <div class="meta-block">
+                <div class="meta-label">Solo Status</div>
+                <div class="meta-value">
+                  <span class="elo-pill ${soloClass}">${soloStatus || "—"}</span>
+                </div>
+              </div>
+
+              <div class="meta-block">
+                <div class="meta-label">Team Status</div>
+                <div class="meta-value">
+                  <span class="elo-pill ${teamClass}">${teamStatus || "—"}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-bottom">
+              <div class="mini-stat">
+                <div>Partidas (30d): <strong class="matches-cell">${matchs || "—"}</strong></div>
+                <div>Dias no clan: <strong>${diasClan || "—"}</strong></div>
+              </div>
+
+              <a class="profile-btn" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a>
+            </div>
+          `;
+
+          grid.appendChild(card);
+
+          const matchesEl = card.querySelector(".matches-cell");
+          aplicarCorPartidas(matchesEl, matchs);
+        });
+      })
+      .catch(err => console.error("Erro ao carregar roster:", err));
+  </script>
+</body>
+</html>
