@@ -150,17 +150,18 @@
 
   <!-- Overlay + Menu lateral -->
   <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
-  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
-    <div class="side-menu-header">
-      <span>Menu IMBR</span>
-      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
-    </div>
-<a href="index.html">🏠 Home</a>
+<nav id="side-menu" class="side-menu" aria-label="Menu principal">
+  <div class="side-menu-header">
+    <span>Menu IMBR</span>
+    <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+  </div>
+  <a href="index.html">🏠 Home</a>
   <a href="team.html">👥 Lineup</a>
   <a href="redlist.html">🔴 Redlist</a>
   <a href="index.html#duelos">⚔ Duelos</a>
-  <a href="index.html#campeonatos">🏆 Campeonatos</a
-  </nav>
+  <a href="index.html#campeonatos">🏆 Campeonatos</a>
+</nav>
+
 
   <main>
     <section class="lineup-card">
@@ -184,151 +185,153 @@
     <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
   </footer>
 
-  <script>
-    // MENU
-    function toggleMenu() { document.body.classList.toggle("menu-open"); }
-    function closeMenu() { document.body.classList.remove("menu-open"); }
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
+<script>
+  // MENU
+  function toggleMenu() { document.body.classList.toggle("menu-open"); }
+  function closeMenu() { document.body.classList.remove("menu-open"); }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
 
-    // CSV
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+  // CSV
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-    // filtros
-    const ALLOWED_ROLES = new Set(["Titular", "Reserva", "Coach"]);
+  // FILTRO + ORDEM
+  const ALLOWED_ROLES = new Set(["Titular", "Reserva", "Coach"]);
+  const ROLE_ORDER = ["Titular", "Reserva", "Coach"];
 
-    function aplicarCorPartidas(elemento, valor) {
-      if (valor == null) return;
-      const numero = parseInt(valor.toString().replace("+", ""));
-      if (isNaN(numero)) return;
+  function aplicarCorPartidas(elemento, valor) {
+    if (valor == null) return;
+    const numero = parseInt(valor.toString().replace("+", ""));
+    if (isNaN(numero)) return;
 
-      elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
-      elemento.style.color = "";
-      elemento.style.fontWeight = "bold";
+    elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
+    elemento.style.color = "";
+    elemento.style.fontWeight = "bold";
 
-      if (numero === 0) {
-        elemento.classList.add("partidas-vermelho");
-      } else if (numero < 30) {
-        const t = (numero - 1) / 28;
-        const hue = 0 + 50 * t;
-        elemento.style.color = `hsl(${hue}, 100%, 50%)`;
-      } else {
-        elemento.classList.add("partidas-verde");
-      }
+    if (numero === 0) {
+      elemento.classList.add("partidas-vermelho");
+    } else if (numero < 30) {
+      const t = (numero - 1) / 28;
+      const hue = 0 + 50 * t;
+      elemento.style.color = `hsl(${hue}, 100%, 50%)`;
+    } else {
+      elemento.classList.add("partidas-verde");
     }
+  }
 
-    function getEloClass(texto) {
-      const t = (texto || "").toLowerCase();
-      if (t.includes("conquer")) return "elo-conqueror";
-      if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
-      if (t.includes("plat")) return "elo-platinum";
-      if (t.includes("gold") || t.includes("ouro")) return "elo-gold";
-      if (t.includes("silver") || t.includes("prata")) return "elo-silver";
-      if (t.includes("bronze")) return "elo-bronze";
-      return "";
+  function getEloClass(texto) {
+    const t = (texto || "").toLowerCase();
+    if (t.includes("conquer")) return "elo-conqueror";
+    if (t.includes("diamond") || t.includes("diam")) return "elo-diamond";
+    if (t.includes("plat")) return "elo-platinum";
+    if (t.includes("gold") || t.includes("ouro")) return "elo-gold";
+    if (t.includes("silver") || t.includes("prata")) return "elo-silver";
+    if (t.includes("bronze")) return "elo-bronze";
+    return "";
+  }
+
+  function formatNomeIMBR(nome) {
+    let nomeFormatado = nome;
+    const upperNome = (nome || "").toUpperCase();
+    if (upperNome.startsWith("IMBR")) {
+      let resto = nome.slice(4).trim();
+      if (resto.startsWith("|")) resto = resto.slice(1).trim();
+      nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
     }
+    return nomeFormatado;
+  }
 
-    function formatNomeIMBR(nome) {
-      let nomeFormatado = nome;
-      const upperNome = (nome || "").toUpperCase();
-      if (upperNome.startsWith("IMBR")) {
-        let resto = nome.slice(4).trim();
-        if (resto.startsWith("|")) resto = resto.slice(1).trim();
-        nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
-      }
-      return nomeFormatado;
-    }
+  function roleClass(role) {
+    if (role === "Titular") return "main";
+    if (role === "Coach") return "coach";
+    return "sub"; // Reserva
+  }
 
-function roleClass(role) {
-  if (role === "Titular") return "main";
-  if (role === "Coach") return "coach";
-  return "sub"; // Reserva
-}
+  fetch(CSV_URL)
+    .then(r => r.text())
+    .then(csv => {
+      const grid = document.getElementById("roster-grid");
+      if (!grid) return;
 
+      const linhas = csv.trim().split("\n").slice(1);
 
-    fetch(CSV_URL)
-      .then(r => r.text())
-      .then(csv => {
-        const grid = document.getElementById("roster-grid");
-        const linhas = csv.trim().split("\n").slice(1);
+      const playersByRole = {
+        "Titular": [],
+        "Reserva": [],
+        "Coach": []
+      };
 
-const playersByRole = {
-  "Titular": [],
-  "Reserva": [],
-  "Coach": []
-};
+      linhas.forEach(linha => {
+        const cols = linha.split(",");
+        const nome       = (cols[0] || "").trim();
+        const role       = (cols[1] || "").trim();
+        const soloStatus = (cols[2] || "").trim();
+        const teamStatus = (cols[3] || "").trim();
+        const matchs     = (cols[4] || "").trim();
+        const diasClan   = (cols[5] || "").trim();
+        const perfilUrl  = (cols[6] || "#").trim();
 
-linhas.forEach(linha => {
-  const cols = linha.split(",");
-  const nome       = (cols[0] || "").trim();
-  const role       = (cols[1] || "").trim();
-  const soloStatus = (cols[2] || "").trim();
-  const teamStatus = (cols[3] || "").trim();
-  const matchs     = (cols[4] || "").trim();
-  const diasClan   = (cols[5] || "").trim();
-  const perfilUrl  = (cols[6] || "#").trim();
+        if (!nome) return;
+        if (!ALLOWED_ROLES.has(role)) return;
+        if (!playersByRole[role]) return;
 
-  if (!nome) return;
-  if (!ALLOWED_ROLES.has(role)) return;
-
-  playersByRole[role].push({
-    nome, role, soloStatus, teamStatus, matchs, diasClan, perfilUrl
-  });
-});
-
-        ROLE_ORDER.forEach(role => {
-  playersByRole[role].forEach(player => {
-    const soloClass = getEloClass(player.soloStatus);
-    const teamClass = getEloClass(player.teamStatus);
-
-    const card = document.createElement("div");
-    card.className = "player-card";
-
-    card.innerHTML = `
-      <div class="player-card-top">
-        <div class="player-name">${formatNomeIMBR(player.nome)}</div>
-        <span class="role-badge ${roleClass(role)}">${role}</span>
-      </div>
-
-      <div class="player-meta">
-        <div class="meta-block">
-          <div class="meta-label">Solo Status</div>
-          <div class="meta-value">
-            <span class="elo-pill ${soloClass}">${player.soloStatus || "—"}</span>
-          </div>
-        </div>
-
-        <div class="meta-block">
-          <div class="meta-label">Team Status</div>
-          <div class="meta-value">
-            <span class="elo-pill ${teamClass}">${player.teamStatus || "—"}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="player-bottom">
-        <div class="mini-stat">
-          <div>Partidas (30d): <strong class="matches-cell">${player.matchs || "—"}</strong></div>
-          <div>Dias no clan: <strong>${player.diasClan || "—"}</strong></div>
-        </div>
-
-        <a class="profile-btn" href="${player.perfilUrl}" target="_blank" rel="noopener">
-          Ver perfil
-        </a>
-      </div>
-    `;
-
-    grid.appendChild(card);
-
-    aplicarCorPartidas(card.querySelector(".matches-cell"), player.matchs);
-  });
-});
-
-
-          const matchesEl = card.querySelector(".matches-cell");
-          aplicarCorPartidas(matchesEl, matchs);
+        playersByRole[role].push({
+          nome, role, soloStatus, teamStatus, matchs, diasClan, perfilUrl
         });
       });
-      .catch(err => console.error("Erro ao carregar roster:", err));
-  </script>
+
+      // limpa antes de renderizar (caso recarregue)
+      grid.innerHTML = "";
+
+      ROLE_ORDER.forEach(role => {
+        playersByRole[role].forEach(player => {
+          const soloClass = getEloClass(player.soloStatus);
+          const teamClass = getEloClass(player.teamStatus);
+
+          const card = document.createElement("div");
+          card.className = "player-card";
+
+          card.innerHTML = `
+            <div class="player-card-top">
+              <div class="player-name">${formatNomeIMBR(player.nome)}</div>
+              <span class="role-badge ${roleClass(role)}">${role}</span>
+            </div>
+
+            <div class="player-meta">
+              <div class="meta-block">
+                <div class="meta-label">Solo Status</div>
+                <div class="meta-value">
+                  <span class="elo-pill ${soloClass}">${player.soloStatus || "—"}</span>
+                </div>
+              </div>
+
+              <div class="meta-block">
+                <div class="meta-label">Team Status</div>
+                <div class="meta-value">
+                  <span class="elo-pill ${teamClass}">${player.teamStatus || "—"}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="player-bottom">
+              <div class="mini-stat">
+                <div>Partidas (30d): <strong class="matches-cell">${player.matchs || "—"}</strong></div>
+                <div>Dias no clan: <strong>${player.diasClan || "—"}</strong></div>
+              </div>
+
+              <a class="profile-btn" href="${player.perfilUrl}" target="_blank" rel="noopener">
+                Ver perfil
+              </a>
+            </div>
+          `;
+
+          grid.appendChild(card);
+
+          aplicarCorPartidas(card.querySelector(".matches-cell"), player.matchs);
+        });
+      });
+    })
+    .catch(err => console.error("Erro ao carregar roster:", err));
+</script>
+
 </body>
 </html>
