@@ -350,11 +350,11 @@
         const soloStatus = (cols[2] || "").trim();
 
         // ✅ COLUNA D = link do perfil
-        const perfilUrl  = (cols[3] || "").trim();
+        const perfilUrl  = (cols[6] || "").trim();
 
-        const teamStatus = (cols[4] || "").trim();
-        const matchs     = (cols[5] || "").trim();
-        const diasClan   = (cols[6] || "").trim();
+        const teamStatus = (cols[3] || "").trim();
+        const matchs     = (cols[4] || "").trim();
+        const diasClan   = (cols[5] || "").trim();
 
         if (!nome) return;
         if (!ALLOWED_ROLES.has(role)) return;
