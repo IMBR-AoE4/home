@@ -238,10 +238,12 @@
       return nomeFormatado;
     }
 
-    function roleClass(role) {
-      if (role === "Titular") return "main";
-      return "sub"; // Reserva / Serie B
-    }
+function roleClass(role) {
+  if (role === "Titular") return "main";
+  if (role === "Coach") return "coach";
+  return "sub"; // Reserva
+}
+
 
     fetch(CSV_URL)
       .then(r => r.text())
@@ -249,58 +251,78 @@
         const grid = document.getElementById("roster-grid");
         const linhas = csv.trim().split("\n").slice(1);
 
-        linhas.forEach(linha => {
-          const cols = linha.split(",");
-          const nome       = (cols[0] || "").trim();
-          const role       = (cols[1] || "").trim();
-          const soloStatus = (cols[2] || "").trim();
-          const teamStatus = (cols[3] || "").trim();
-          const matchs     = (cols[4] || "").trim();
-          const diasClan   = (cols[5] || "").trim();
-          const perfilUrl  = (cols[6] || "#").trim();
+const playersByRole = {
+  "Titular": [],
+  "Reserva": [],
+  "Coach": []
+};
 
-          if (!nome) return;
-          if (!ALLOWED_ROLES.has(role)) return;
+linhas.forEach(linha => {
+  const cols = linha.split(",");
+  const nome       = (cols[0] || "").trim();
+  const role       = (cols[1] || "").trim();
+  const soloStatus = (cols[2] || "").trim();
+  const teamStatus = (cols[3] || "").trim();
+  const matchs     = (cols[4] || "").trim();
+  const diasClan   = (cols[5] || "").trim();
+  const perfilUrl  = (cols[6] || "#").trim();
 
-          const soloClass = getEloClass(soloStatus);
-          const teamClass = getEloClass(teamStatus);
+  if (!nome) return;
+  if (!ALLOWED_ROLES.has(role)) return;
 
-          const card = document.createElement("div");
-          card.className = "player-card";
+  playersByRole[role].push({
+    nome, role, soloStatus, teamStatus, matchs, diasClan, perfilUrl
+  });
+});
 
-          card.innerHTML = `
-            <div class="player-card-top">
-              <div class="player-name">${formatNomeIMBR(nome)}</div>
-              <span class="role-badge ${roleClass(role)}">${role}</span>
-            </div>
+        ROLE_ORDER.forEach(role => {
+  playersByRole[role].forEach(player => {
+    const soloClass = getEloClass(player.soloStatus);
+    const teamClass = getEloClass(player.teamStatus);
 
-            <div class="player-meta">
-              <div class="meta-block">
-                <div class="meta-label">Solo Status</div>
-                <div class="meta-value">
-                  <span class="elo-pill ${soloClass}">${soloStatus || "—"}</span>
-                </div>
-              </div>
+    const card = document.createElement("div");
+    card.className = "player-card";
 
-              <div class="meta-block">
-                <div class="meta-label">Team Status</div>
-                <div class="meta-value">
-                  <span class="elo-pill ${teamClass}">${teamStatus || "—"}</span>
-                </div>
-              </div>
-            </div>
+    card.innerHTML = `
+      <div class="player-card-top">
+        <div class="player-name">${formatNomeIMBR(player.nome)}</div>
+        <span class="role-badge ${roleClass(role)}">${role}</span>
+      </div>
 
-            <div class="player-bottom">
-              <div class="mini-stat">
-                <div>Partidas (30d): <strong class="matches-cell">${matchs || "—"}</strong></div>
-                <div>Dias no clan: <strong>${diasClan || "—"}</strong></div>
-              </div>
+      <div class="player-meta">
+        <div class="meta-block">
+          <div class="meta-label">Solo Status</div>
+          <div class="meta-value">
+            <span class="elo-pill ${soloClass}">${player.soloStatus || "—"}</span>
+          </div>
+        </div>
 
-              <a class="profile-btn" href="${perfilUrl}" target="_blank" rel="noopener">Ver perfil</a>
-            </div>
-          `;
+        <div class="meta-block">
+          <div class="meta-label">Team Status</div>
+          <div class="meta-value">
+            <span class="elo-pill ${teamClass}">${player.teamStatus || "—"}</span>
+          </div>
+        </div>
+      </div>
 
-          grid.appendChild(card);
+      <div class="player-bottom">
+        <div class="mini-stat">
+          <div>Partidas (30d): <strong class="matches-cell">${player.matchs || "—"}</strong></div>
+          <div>Dias no clan: <strong>${player.diasClan || "—"}</strong></div>
+        </div>
+
+        <a class="profile-btn" href="${player.perfilUrl}" target="_blank" rel="noopener">
+          Ver perfil
+        </a>
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+    aplicarCorPartidas(card.querySelector(".matches-cell"), player.matchs);
+  });
+});
+
 
           const matchesEl = card.querySelector(".matches-cell");
           aplicarCorPartidas(matchesEl, matchs);
