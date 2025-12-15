@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IMBR – Recrutas Ativos</title>
+  <title>IMBR – Jogadores na Redlist</title>
 
 <link rel="stylesheet" href="style.css" />
 
@@ -59,6 +59,33 @@
         </table>
       </div>
     </section>
+
+<section class="lineup-card" id="sem-imbr-card">
+  <div class="lineup-header">
+    <div>
+      <h2 class="lineup-title">👀 Jogadores sem tag IMBR</h2>
+      <p class="lineup-sub">
+        Membros do clã que ainda não utilizam a sigla <strong>IMBR</strong> no nick
+      </p>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Função</th>
+          <th>Jogador</th>
+        </tr>
+      </thead>
+      <tbody id="sem-imbr-body">
+        <!-- preenchido via JS -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+   
   </main>
 
   <footer>
@@ -86,13 +113,13 @@
 
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-  // mesma função do index
+  // mesma função do index (0 vermelho, 1-29 degradê vermelho->amarelo, 30+ verde)
   function aplicarCorPartidas(elemento, valor) {
-    if (valor == null) return;
+    if (!elemento || valor == null) return;
 
     const numero = parseInt(valor.toString().replace("+", ""));
-
     if (isNaN(numero)) return;
+
     elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
     elemento.style.color = "";
     elemento.style.fontWeight = "bold";
@@ -100,12 +127,9 @@
     if (numero === 0) {
       elemento.classList.add("partidas-vermelho");
     } else if (numero < 30) {
-      const t = (numero - 1) / 28;
-      const hue = 0 + 50 * t;
-      const saturation = 100;
-      const lightness = 50;
-
-      elemento.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      const t = (numero - 1) / 28; // 1..29 => 0..1
+      const hue = 0 + 50 * t;      // vermelho(0) -> amarelo(50)
+      elemento.style.color = `hsl(${hue}, 100%, 50%)`;
     } else {
       elemento.classList.add("partidas-verde");
     }
@@ -114,10 +138,15 @@
   fetch(CSV_URL)
     .then(r => r.text())
     .then(csv => {
-      const tbody = document.getElementById("recrutas-body");
+      const recrutasBody = document.getElementById("recrutas-body");
+      const semImbrBody  = document.getElementById("sem-imbr-body");
+      const semImbrCard  = document.getElementById("sem-imbr-card");
+
       const linhas = csv.trim().split("\n").slice(1);
 
       linhas.forEach(linha => {
+        if (!linha.trim()) return;
+
         const cols = linha.split(",");
         const nome   = (cols[0] || "").trim();
         const role   = (cols[1] || "").trim();
@@ -127,10 +156,22 @@
 
         if (!nome) return;
 
-        const partidas = parseInt(jogos.replace("+","").trim());
+        // ----------------- CARD: Jogadores sem tag IMBR -----------------
+        const upperNome = nome.toUpperCase();
+        const temIMBR = upperNome.startsWith("IMBR");
 
-        // FILTRO: só Recruta com menos de 30 partidas
-        if (role === "Recruta" && partidas < 30) {
+        if (!temIMBR && semImbrBody) {
+          const trSem = document.createElement("tr");
+          trSem.innerHTML = `
+            <td>${role || "-"}</td>
+            <td>${nome}</td>
+          `;
+          semImbrBody.appendChild(trSem);
+        }
+
+        // ----------------- TABELA: Recrutas com menos de 30 jogos -----------------
+        const partidas = parseInt(jogos.toString().replace("+", "").trim());
+        if (role === "Recruta" && !isNaN(partidas) && partidas < 30 && recrutasBody) {
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${nome}</td>
@@ -138,15 +179,20 @@
             <td>${dias}</td>
             <td><a class="aoe-link" href="${perfil}" target="_blank" rel="noopener">Ver perfil</a></td>
           `;
-          tbody.appendChild(tr);
+          recrutasBody.appendChild(tr);
 
           const matchesTd = tr.querySelector(".matches-cell");
           aplicarCorPartidas(matchesTd, jogos);
         }
       });
-    });
-</script>
 
+      // Se não existir ninguém sem IMBR, esconde o card
+      if (semImbrBody && semImbrCard && semImbrBody.children.length === 0) {
+        semImbrCard.style.display = "none";
+      }
+    })
+    .catch(err => console.error("Erro ao carregar CSV:", err));
+</script>
 
 <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
 
