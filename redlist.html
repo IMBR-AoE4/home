@@ -3,212 +3,465 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IMBR – Jogadores na Redlist</title>
+  <title>IMBR – Redlist</title>
 
-<link rel="stylesheet" href="style.css" />
+  <!-- Mantém seu CSS global do site -->
+  <link rel="stylesheet" href="style.css" />
 
+  <style>
+    /* Layout base do conteúdo (não briga com seu style.css) */
+    main { max-width: 1180px; margin: 0 auto; padding: 22px 16px 36px; }
+
+    .page-title{
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      margin: 6px 0 14px;
+    }
+
+    .card{
+      background: rgba(11,16,32,0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      padding: 16px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+
+    .card-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .card-title{
+      font-size: 1.12rem;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .card-sub{
+      margin: 4px 0 0;
+      color: rgba(245,245,245,0.68);
+      font-size: 0.92rem;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(245,245,245,0.85);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.22);
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    .pill .dot{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: rgba(0,179,107,0.85);
+      box-shadow: 0 0 10px rgba(0,179,107,0.35);
+    }
+
+    .table-wrap{
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead th{
+      text-align:left;
+      padding: 12px 12px;
+      background: linear-gradient(90deg, rgba(0,179,107,0.22), rgba(28,126,214,0.18));
+      color: rgba(245,245,245,0.92);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    tbody td{
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: rgba(245,245,245,0.9);
+    }
+
+    tbody tr:hover{
+      background: rgba(255,255,255,0.03);
+    }
+
+    .aoe-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-decoration:none;
+      background: rgba(245,197,66,0.14);
+      border: 1px solid rgba(245,197,66,0.55);
+      color: #ffe083;
+      font-weight: 800;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .aoe-link:hover{
+      transform: translateY(-1px);
+      background: rgba(245,197,66,0.22);
+    }
+
+    /* ✅ Nome em vermelho quando aparece NOS DOIS CARDS */
+    .dup-red, .dup-red *{
+      color: #ff3b3b !important;
+      text-shadow: 0 0 6px rgba(255,59,59,0.6);
+      font-weight: 900;
+    }
+
+    /* cores para partidas (0 = vermelho, 1..29 = gradiente, >=30 = verde) */
+    .partidas-vermelho { color: #ff3b3b; font-weight: 900; }
+    .partidas-verde { color: #00b36b; font-weight: 900; }
+
+    .muted { color: rgba(245,245,245,0.62); }
+
+    @media (max-width: 860px){
+      .card-header{ flex-direction:column; align-items:flex-start; }
+      .pill{ align-self:flex-start; }
+      thead{ display:none; }
+      table, tbody, tr, td{ display:block; width:100%; }
+      tbody td{ border-bottom: none; padding: 10px 12px; }
+      tbody tr{ border-bottom: 1px solid rgba(255,255,255,0.06); padding: 8px 0; }
+      tbody td::before{
+        content: attr(data-label);
+        display:block;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(245,245,245,0.55);
+        margin-bottom: 6px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<header>
-  <div class="header-inner">
-    <a href="index.html" class="logo-link">
-      <div class="logo-box">
-        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+  <!-- HEADER PADRÃO COM MENU (usa seu style.css + menu-open) -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <div class="logo-box">
+          <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+          <div>
+            <div class="logo-text-main">IMBR</div>
+            <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+          </div>
+        </div>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
+    <div class="side-menu-header">
+      <span>Menu IMBR</span>
+      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
+    </div>
+    <a href="index.html">🏠 Home</a>
+    <a href="team.html">👥 Lineup</a>
+    <a href="redlist.html">🔴 Redlist</a>
+    <a href="index.html#duelos">⚔ Duelos</a>
+    <a href="champs.html">🏆 Campeonatos</a>
+  </nav>
+
+  <main>
+    <div class="page-title">Redlist</div>
+
+    <!-- Card 1 -->
+    <section class="card" id="card-recrutas30">
+      <div class="card-header">
         <div>
-          <div class="logo-text-main">IMBR</div>
-          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+          <h2 class="card-title">Recrutas com menos de 30 jogos</h2>
+          <p class="card-sub">Jogadores marcados como <strong>Recruta</strong> com menos de 30 partidas nos últimos 30 dias.</p>
         </div>
-      </div>
-    </a>
-    <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</header>
-
-
-
- <main>
-    <section class="lineup-card">
-      <div class="lineup-header">
-        <div>
-          <h2 class="lineup-title">Recrutas com menos de 30 jogos</h2>
-          <p class="lineup-sub">
-            Jogadores marcados como <strong>Recruta</strong> com menos de 30 partidas nos últimos 30 dias.
-          </p>
-        </div>
-        <div class="role-pill">
-          <span class="role-dot"></span> Lista dinâmica via planilha
-        </div>
+        <div class="pill"><span class="dot"></span> Lista dinâmica via planilha</div>
       </div>
 
-      <div class="table-wrapper">
+      <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Jogador</th>
               <th>Partidas (30d)</th>
-              <th>Dias no Clan</th>
+              <th>Dias no clan</th>
               <th>Perfil</th>
             </tr>
           </thead>
-          <tbody id="recrutas-body"></tbody>
+          <tbody id="recrutas30-body">
+            <tr><td class="muted" colspan="4">Carregando…</td></tr>
+          </tbody>
         </table>
       </div>
     </section>
 
-<section class="lineup-card" id="sem-imbr-card">
-  <div class="lineup-header">
-    <div>
-      <h2 class="lineup-title">👀 Jogadores sem tag IMBR</h2>
-      <p class="lineup-sub">
-        Membros do clã que ainda não utilizam a sigla <strong>IMBR</strong> no nick
-      </p>
-    </div>
-  </div>
+    <!-- Card 2 -->
+    <section class="card" id="card-semimbr">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Jogadores sem tag IMBR</h2>
+          <p class="card-sub">Membros do clã que ainda não utilizam a sigla <strong>IMBR</strong> no nick.</p>
+        </div>
+      </div>
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Função</th>
-          <th>Jogador</th>
-        </tr>
-      </thead>
-      <tbody id="sem-imbr-body">
-        <!-- preenchido via JS -->
-      </tbody>
-    </table>
-  </div>
-</section>
-
-   
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Função</th>
+              <th>Jogador</th>
+            </tr>
+          </thead>
+          <tbody id="semimbr-body">
+            <tr><td class="muted" colspan="2">Carregando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
   <footer>
     <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
   </footer>
 
-<script>
-  // MENU
-  function toggleMenu() {
-    document.body.classList.toggle("menu-open");
-  }
+  <script>
+    // MENU
+    function toggleMenu() { document.body.classList.toggle("menu-open"); }
+    function closeMenu() { document.body.classList.remove("menu-open"); }
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
 
-  function closeMenu() {
-    document.body.classList.remove("menu-open");
-  }
+    // ✅ Ajuste aqui se trocar a planilha
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
-  // Fecha com ESC
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      closeMenu();
-    }
-  });
+    // ---------- CSV Parser (robusto) ----------
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
 
-  // ----------------- RECRUTAS / PLANILHA -----------------
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
 
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
-
-  // mesma função do index (0 vermelho, 1-29 degradê vermelho->amarelo, 30+ verde)
-  function aplicarCorPartidas(elemento, valor) {
-    if (!elemento || valor == null) return;
-
-    const numero = parseInt(valor.toString().replace("+", ""));
-    if (isNaN(numero)) return;
-
-    elemento.classList.remove("partidas-vermelho", "partidas-amarelo", "partidas-verde");
-    elemento.style.color = "";
-    elemento.style.fontWeight = "bold";
-
-    if (numero === 0) {
-      elemento.classList.add("partidas-vermelho");
-    } else if (numero < 30) {
-      const t = (numero - 1) / 28; // 1..29 => 0..1
-      const hue = 0 + 50 * t;      // vermelho(0) -> amarelo(50)
-      elemento.style.color = `hsl(${hue}, 100%, 50%)`;
-    } else {
-      elemento.classList.add("partidas-verde");
-    }
-  }
-
-  fetch(CSV_URL)
-    .then(r => r.text())
-    .then(csv => {
-      const recrutasBody = document.getElementById("recrutas-body");
-      const semImbrBody  = document.getElementById("sem-imbr-body");
-      const semImbrCard  = document.getElementById("sem-imbr-card");
-
-      const linhas = csv.trim().split("\n").slice(1);
-
-      linhas.forEach(linha => {
-        if (!linha.trim()) return;
-
-        const cols = linha.split(",");
-        const nome   = (cols[0] || "").trim();
-        const role   = (cols[1] || "").trim();
-        const jogos  = (cols[4] || "").trim();
-        const dias   = (cols[5] || "").trim();
-        const perfil = (cols[6] || "").trim();
-
-        if (!nome) return;
-
-        // ----------------- CARD: Jogadores sem tag IMBR -----------------
-        const upperNome = nome.toUpperCase();
-        const temIMBR = upperNome.startsWith("IMBR");
-
-        if (!temIMBR && semImbrBody) {
-          const trSem = document.createElement("tr");
-          trSem.innerHTML = `
-            <td>${role || "-"}</td>
-            <td>${nome}</td>
-          `;
-          semImbrBody.appendChild(trSem);
+        if (ch === '"' && inQuotes && next === '"') { // escape ""
+          cur += '"';
+          i++;
+          continue;
         }
 
-        // ----------------- TABELA: Recrutas com menos de 30 jogos -----------------
-        const partidas = parseInt(jogos.toString().replace("+", "").trim());
-        if (role === "Recruta" && !isNaN(partidas) && partidas < 30 && recrutasBody) {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${nome}</td>
-            <td class="matches-cell">${jogos}</td>
-            <td>${dias}</td>
-            <td><a class="aoe-link" href="${perfil}" target="_blank" rel="noopener">Ver perfil</a></td>
-          `;
-          recrutasBody.appendChild(tr);
-
-          const matchesTd = tr.querySelector(".matches-cell");
-          aplicarCorPartidas(matchesTd, jogos);
+        if (ch === '"') {
+          inQuotes = !inQuotes;
+          continue;
         }
-      });
 
-      // Se não existir ninguém sem IMBR, esconde o card
-      if (semImbrBody && semImbrCard && semImbrBody.children.length === 0) {
-        semImbrCard.style.display = "none";
+        if (ch === "," && !inQuotes) {
+          row.push(cur);
+          cur = "";
+          continue;
+        }
+
+        if ((ch === "\n" || ch === "\r") && !inQuotes) {
+          if (ch === "\r" && next === "\n") i++;
+          row.push(cur);
+          cur = "";
+          if (row.length > 1 || row[0]?.trim()) rows.push(row);
+          row = [];
+          continue;
+        }
+
+        cur += ch;
       }
-    })
-    .catch(err => console.error("Erro ao carregar CSV:", err));
-</script>
 
-<div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
+      // last cell
+      if (cur.length || row.length) {
+        row.push(cur);
+        if (row.length > 1 || row[0]?.trim()) rows.push(row);
+      }
 
-<nav id="side-menu" class="side-menu" aria-label="Menu principal">
-  <div class="side-menu-header">
-    <span>Menu IMBR</span>
-    <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
-  </div>
-  <a href="index.html">🏠 Home</a>
-  <a href="team.html">👥 Lineup</a>
-  <a href="redlist.html">🔴 Redlist</a>
-  <a href="index.html#duelos">⚔️ Duelos</a>
-    <a href="champs.html">🏆 Campeonatos</a>
-</nav>
+      return rows;
+    }
 
+    // ---------- Util ----------
+    function aplicarCorPartidas(elemento, valor) {
+      if (!elemento) return;
+      if (valor == null) return;
 
+      const numero = parseInt(valor.toString().replace("+", ""), 10);
+      if (isNaN(numero)) return;
 
+      elemento.classList.remove("partidas-vermelho", "partidas-verde");
+      elemento.style.color = "";
+      elemento.style.fontWeight = "900";
+
+      if (numero === 0) {
+        elemento.classList.add("partidas-vermelho");
+      } else if (numero < 30) {
+        const t = (numero - 1) / 28; // 1..29 -> 0..1
+        const hue = 0 + 50 * t;      // 0 (vermelho) -> 50 (amarelo)
+        elemento.style.color = `hsl(${hue}, 100%, 50%)`;
+      } else {
+        elemento.classList.add("partidas-verde");
+      }
+    }
+
+    function safeText(v) { return (v ?? "").toString().trim(); }
+
+    function hasIMBR(nome) {
+      return safeText(nome).toUpperCase().startsWith("IMBR");
+    }
+
+    function toKey(nome) {
+      return safeText(nome).toLowerCase();
+    }
+
+    // ---------- Main ----------
+    async function init() {
+      const recrutasBody = document.getElementById("recrutas30-body");
+      const semimbrBody  = document.getElementById("semimbr-body");
+
+      try {
+        const r = await fetch(CSV_URL, { cache: "no-store" });
+        const csvText = await r.text();
+
+        const table = parseCSV(csvText);
+        if (!table || table.length < 2) throw new Error("CSV vazio/inesperado");
+
+        // Remove header
+        const dataRows = table.slice(1);
+
+        // 1) Carrega tudo em memória
+        const players = dataRows
+          .map(cols => ({
+            nome:   safeText(cols[0]),
+            role:   safeText(cols[1]),
+            solo:   safeText(cols[2]),
+            team:   safeText(cols[3]),
+            matchs: safeText(cols[4]),
+            dias:   safeText(cols[5]),
+            perfil: safeText(cols[6]),
+          }))
+          .filter(p => !!p.nome);
+
+        // 2) Define quem entra em cada card
+        const setRecrutas30 = new Set();
+        const setSemIMBR    = new Set();
+
+        for (const p of players) {
+          const key = toKey(p.nome);
+
+          // Card 1: Recruta e matchs < 30
+          const partidas = parseInt((p.matchs || "").toString().replace("+", ""), 10);
+          if (p.role === "Recruta" && !isNaN(partidas) && partidas < 30) {
+            setRecrutas30.add(key);
+          }
+
+          // Card 2: sem IMBR no nick
+          if (!hasIMBR(p.nome)) {
+            setSemIMBR.add(key);
+          }
+        }
+
+        // 3) Intersection = aparece nos dois cards (pinta vermelho)
+        const setBoth = new Set();
+        for (const k of setRecrutas30) {
+          if (setSemIMBR.has(k)) setBoth.add(k);
+        }
+
+        // 4) Render
+        recrutasBody.innerHTML = "";
+        semimbrBody.innerHTML  = "";
+
+        // Card 1 render
+        const recrutasList = players
+          .filter(p => {
+            const partidas = parseInt((p.matchs || "").toString().replace("+", ""), 10);
+            return p.role === "Recruta" && !isNaN(partidas) && partidas < 30;
+          })
+          .sort((a,b) => {
+            const pa = parseInt((a.matchs||"0").replace("+",""),10) || 0;
+            const pb = parseInt((b.matchs||"0").replace("+",""),10) || 0;
+            return pa - pb; // menor primeiro
+          });
+
+        if (recrutasList.length === 0) {
+          recrutasBody.innerHTML = `<tr><td class="muted" colspan="4">Nenhum recruta com menos de 30 jogos.</td></tr>`;
+        } else {
+          for (const p of recrutasList) {
+            const key = toKey(p.nome);
+            const red = setBoth.has(key) ? "dup-red" : "";
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td data-label="Jogador" class="${red}">${p.nome}</td>
+              <td data-label="Partidas (30d)" class="matches-cell">${p.matchs || "—"}</td>
+              <td data-label="Dias no clan">${p.dias || "—"}</td>
+              <td data-label="Perfil">
+                <a class="aoe-link" href="${p.perfil || "#"}" target="_blank" rel="noopener">Ver perfil</a>
+              </td>
+            `;
+            recrutasBody.appendChild(tr);
+            aplicarCorPartidas(tr.querySelector(".matches-cell"), p.matchs);
+          }
+        }
+
+        // Card 2 render
+        const semImbrList = players
+          .filter(p => !hasIMBR(p.nome))
+          .sort((a,b) => (a.role || "").localeCompare(b.role || "") || a.nome.localeCompare(b.nome));
+
+        if (semImbrList.length === 0) {
+          semimbrBody.innerHTML = `<tr><td class="muted" colspan="2">Todo mundo já está com tag IMBR 👌</td></tr>`;
+        } else {
+          for (const p of semImbrList) {
+            const key = toKey(p.nome);
+            const red = setBoth.has(key) ? "dup-red" : "";
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td data-label="Função">${p.role || "—"}</td>
+              <td data-label="Jogador" class="${red}">${p.nome}</td>
+            `;
+            semimbrBody.appendChild(tr);
+          }
+        }
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById("recrutas30-body").innerHTML =
+          `<tr><td class="muted" colspan="4">Erro ao carregar a planilha.</td></tr>`;
+        document.getElementById("semimbr-body").innerHTML =
+          `<tr><td class="muted" colspan="2">Erro ao carregar a planilha.</td></tr>`;
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
