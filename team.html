@@ -146,6 +146,10 @@
       transform: translateY(-1px);
       background: rgba(245,197,66,0.22);
     }
+  .player-name.red-duplicate {
+    color: #ff3b3b;
+    text-shadow: 0 0 6px rgba(255,59,59,0.6);
+  }
   </style>
 </head>
 
@@ -335,6 +339,7 @@
       if (!grid) return;
 
       const linhas = csv.trim().split("\n").slice(1);
+      const nomeCount = {};
 
       const playersByRole = {
         "Titular": [],
@@ -346,6 +351,8 @@
         const cols = linha.split(",");
 
         const nome       = (cols[0] || "").trim();
+        const nomeKey = nome.toLowerCase();
+nomeCount[nomeKey] = (nomeCount[nomeKey] || 0) + 1;
         const role       = (cols[1] || "").trim();
         const soloStatus = (cols[2] || "").trim();
 
@@ -386,7 +393,7 @@
                      alt="Avatar"
                      loading="lazy" />
                 <div class="player-name-wrap">
-                  <div class="player-name">${formatNomeIMBR(player.nome)}</div>
+                  <div class="player-name ${nomeCount[player.nome.toLowerCase()] > 1 ? 'red-duplicate' : ''}">  ${formatNomeIMBR(player.nome)}</div>
                   <div class="player-sub">${pid ? "AoE4World ID: " + pid : "AoE4World"}</div>
                 </div>
               </div>
