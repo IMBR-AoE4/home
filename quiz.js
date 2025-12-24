@@ -1,9 +1,9 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8-JmKMHKyf9xImMtoN30e_8Yc3KhAeoVcfdSUeC3jkqaofIEPkz-6lCJRf1FohCbQFpKxhaevCndB/pub?output=csv";
 
-const POINTS_MAX = 1000;
-const BASE_POINTS_PER_Q = POINTS_MAX / QUIZ_SIZE; // 41.666...
-
 const QUIZ_SIZE = 24;
+const POINTS_MAX = 1000;
+const BASE_POINTS_PER_Q = POINTS_MAX / QUIZ_SIZE;
+
 const TIME_LIMIT_MS = 30000;
 
 const QUOTAS = {
