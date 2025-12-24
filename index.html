@@ -9,24 +9,21 @@
 </head>
 
 <body>
-<header>
-  <div class="header-inner">
-    <a href="index.html" class="logo-link">
-      <div class="logo-box">
-        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
-        <div>
-          <div class="logo-text-main">IMBR</div>
-          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
-        </div>
-      </div>
-    </a>
-    <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</header>
+
+	<div id="menu-container"></div>
+	<header>
+	  <div class="header-inner">
+	    <a href="index.html" class="logo-link">
+	      <div class="logo-box">
+	        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+	        <div>
+	          <div class="logo-text-main">IMBR</div>
+	          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+	        </div>
+	      </div>
+	    </a>
+	  </div>
+	</header>
 
 
   <main>
@@ -210,8 +207,6 @@
     }
   });
 
-  // --------------- LINEUP / PLANILHA ------------------
-
   function aplicarCorPartidas(elemento, valor) {
     if (valor == null) return;
 
@@ -358,44 +353,19 @@
       });
     })
     .catch(err => console.error("Erro ao carregar lineup/cargos:", err));
+
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch("menu.html")
+      .then(r => r.text())
+      .then(html => {
+        const el = document.getElementById("menu-container");
+        if (el) el.innerHTML = html;
+      })
+      .catch(console.error);
+  });
 </script>
 
-
-<div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
-
-<nav id="side-menu" class="side-menu" aria-label="Menu principal">
-  <div class="side-menu-header">
-    <span>Menu IMBR</span>
-    <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
-  </div>
-  <a href="index.html">🏠 Home</a>
-  <a href="team.html">👥 Lineup</a>
-  <a href="redlist.html">🔴 Redlist</a>
-  <a href="index.html#duelos">⚔️ Duelos</a>
-    <a href="champs.html">🏆 Campeonatos</a>
-</nav>
-
-  
+<script src="menu.js"></script>
+ 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
