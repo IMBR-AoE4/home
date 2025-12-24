@@ -164,37 +164,26 @@
 </head>
 
 <body>
-  <!-- HEADER PADRÃO COM MENU -->
-  <header>
-    <div class="header-inner">
-      <a href="index.html" class="logo-link">
-        <div class="logo-box">
-          <img src="imbr-logo.png" alt="Logo Clan IMBR" />
-          <div>
+<div id="menu-container"></div>
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-link">
+      <div class="logo-box">
+        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+        <div>
             <div class="logo-text-main">IMBR</div>
             <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
           </div>
-        </div>
-      </a>
+      </div>
+    </a>
 
-      <button class="menu-toggle" type="button" aria-label="Abrir menu" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
-  <nav id="side-menu" class="side-menu" aria-label="Menu principal">
-    <div class="side-menu-header">
-      <span>Menu IMBR</span>
-      <button type="button" class="side-menu-close" aria-label="Fechar menu" onclick="closeMenu()">×</button>
-    </div>
-    <a href="index.html">🏠 Home</a>
-    <a href="team.html">👥 Lineup</a>
-    <a href="redlist.html">🔴 Redlist</a>
-    <a href="index.html#duelos">⚔ Duelos</a>
-    <a href="champs.html">🏆 Campeonatos</a>
-  </nav>
+    <button class="menu-toggle" type="button" aria-label="Abrir menu" data-menu-open>
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
 
   <main>
     <div class="page-title">Redlist</div>
@@ -283,12 +272,10 @@
     <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
   </footer>
 
+<script src="menu.js"></script>
+  
   <script>
-    // MENU
-    function toggleMenu() { document.body.classList.toggle("menu-open"); }
-    function closeMenu() { document.body.classList.remove("menu-open"); }
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
-
+ 
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
 
     // CSV robusto
