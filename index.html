@@ -9,25 +9,28 @@
 </head>
 
 <body>
+<div id="menu-container"></div>
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-link">
+      <div class="logo-box">
+        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+        <div>
+          <div class="logo-text-main">IMBR</div>
+          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+        </div>
+      </div>
+    </a>
 
-	<div id="menu-container"></div>
-	<header>
-	  <div class="header-inner">
-	    <a href="index.html" class="logo-link">
-	      <div class="logo-box">
-	        <img src="imbr-logo.png" alt="Logo Clan IMBR" />
-	        <div>
-	          <div class="logo-text-main">IMBR</div>
-	          <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
-	        </div>
-	      </div>
-	    </a>
-	  </div>
-	</header>
-
+    <button class="menu-toggle" type="button" aria-label="Abrir menu" data-menu-open>
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
 
   <main>
-
 	<section class="logo-big-card">
 			<img src="imbr-logo.png" alt="Logo IMBR" class="logo-big">
 		</section> 
@@ -189,23 +192,10 @@
   <footer>
     <span>Desenvolvido por AzX(Gui) IMBR · Age of Empires IV · Brasil</span>
   </footer>
-  
+
+<script src="menu.js"></script>
+	
 <script>
-  // MENU
-  function toggleMenu() {
-    document.body.classList.toggle("menu-open");
-  }
-
-  function closeMenu() {
-    document.body.classList.remove("menu-open");
-  }
-
-  // Fecha com ESC
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      closeMenu();
-    }
-  });
 
   function aplicarCorPartidas(elemento, valor) {
     if (valor == null) return;
@@ -364,8 +354,5 @@
       .catch(console.error);
   });
 </script>
-
-<script src="menu.js"></script>
- 
 </body>
 </html>
