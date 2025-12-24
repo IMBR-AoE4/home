@@ -759,6 +759,41 @@ body.menu-open {
   overflow: hidden;
 }
 
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  z-index: 998;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: #0b1020;
+  transition: right .3s;
+  z-index: 999;
+}
+
+body.menu-open .menu-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.menu-open .side-menu {
+  right: 0;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+
 @media (max-width: 480px) {
   .side-menu {
     width: 80%;
