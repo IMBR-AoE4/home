@@ -744,3 +744,22 @@ body.menu-open {
     width: 80%;
   }
 }
+
+main.quiz-root {
+  width: 100vw;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 90px 24px 24px !important; /* respeita o header fixo */
+  display: block !important;
+}
+
+main.quiz-root .app {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  main.quiz-root {
+    padding: 80px 16px 16px !important;
+  }
+}
