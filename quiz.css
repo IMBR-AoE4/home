@@ -56,7 +56,7 @@ main.quiz-root {
 }
 
 .quiz-logo {
-  width: min(420px, 92vw);
+  width: min(240px, 50vw);
   height: auto;
   filter: drop-shadow(0 10px 26px rgba(0,0,0,0.55));
 }
