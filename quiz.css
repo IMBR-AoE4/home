@@ -58,7 +58,11 @@ main.quiz-root {
 .quiz-logo {
   width: min(240px, 50vw);
   height: auto;
-  filter: drop-shadow(0 10px 26px rgba(0,0,0,0.55));
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45));
+  margin-bottom: 6px;
+}
+@media (max-width: 520px) {
+  .quiz-logo { width: min(220px, 70vw); }
 }
 
 /* -------------------------------
@@ -168,11 +172,11 @@ main.quiz-root {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 14px;
-  padding: 11px 14px;
+  border-radius: 18px;
+  padding: 14px 18px;
   border: 1px solid rgba(255,255,255,0.10);
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.02em;
   user-select: none;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
@@ -214,6 +218,7 @@ main.quiz-root {
 -------------------------------- */
 .quiz-wrap {
   max-width: 880px;
+  margin: 0 auto; /* ← faltava isso */
 }
 
 .quiz-card {
@@ -241,7 +246,7 @@ main.quiz-root {
 /* pergunta */
 .question-text {
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 1.25;
   margin-bottom: 14px;
 }
@@ -255,14 +260,17 @@ main.quiz-root {
 
 .answer {
   width: 100%;
-  text-align: left;
+  text-align: center;
   border-radius: 16px;
-  padding: 12px 12px;
+  padding: 14px 16px;
   background: rgba(5,8,22,0.72);
   border: 1px solid rgba(255,255,255,0.10);
   color: rgba(245,245,245,0.92);
   cursor: pointer;
   transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  min-height: 54px;                /* ↑ “tap friendly” */
+  font-size: 1.05rem;              /* ↑ */
+  font-weight: 800;                /* ↑ */
 }
 
 .answer:hover {
@@ -288,9 +296,25 @@ main.quiz-root {
 /* ações */
 .actions {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
   flex-wrap: wrap;
-  margin-top: 6px;
+}
+
+.actions .btn {
+  width: min(240px, 46%); /* 2 colunas no desktop */
+  min-height: 56px;       /* ↑ */
+  font-size: 1.05rem;     /* ↑ */
+}
+
+@media (max-width: 600px) {
+  .actions .btn {
+    width: 100%;
+    min-height: 58px;
+    font-size: 1.08rem;
+  }
 }
 
 .microhint {
