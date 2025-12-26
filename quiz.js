@@ -513,8 +513,13 @@
 
     questionText.textContent = q.text;
 
+    // ✅ EMBARALHAR ALTERNATIVAS (sem perder o gabarito)
+    // Mantém opt.col junto do texto, então chosenCol continua comparando com q.answerCol.
+    const displayOptions = q.options.map((o) => ({ ...o }));
+    shuffleInPlace(displayOptions);
+
     answersWrap.innerHTML = "";
-    for (const opt of q.options) {
+    for (const opt of displayOptions) {
       const b = document.createElement("button");
       b.className = "answer-btn";
       b.type = "button";
@@ -522,7 +527,9 @@
       b.dataset.col = opt.col;
 
       b.addEventListener("click", () => {
-        answersWrap.querySelectorAll(".answer-btn").forEach((x) => x.classList.remove("selected"));
+        answersWrap
+          .querySelectorAll(".answer-btn")
+          .forEach((x) => x.classList.remove("selected"));
         b.classList.add("selected");
         selectedAnswerCol = opt.col;
         btnConfirm.disabled = false;
