@@ -7,7 +7,7 @@
   const CSV_URL =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8-JmKMHKyf9xImMtoN30e_8Yc3KhAeoVcfdSUeC3jkqaofIEPkz-6lCJRf1FohCbQFpKxhaevCndB/pub?output=csv";
 
-  const QUIZ_SIZE = 24;
+  const QUIZ_SIZE = 40;
   const POINTS_MAX = 1000;
 
   // IMPORTANTE: calculado depois que QUIZ_SIZE existe (e dentro do escopo isolado)
