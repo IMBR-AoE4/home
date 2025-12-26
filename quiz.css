@@ -254,15 +254,15 @@ main.quiz-root {
 /* respostas */
 .answers {
   display: grid;
-  gap: 10px;
+  gap: 14px;
   margin-bottom: 14px;
 }
 
 .answer {
   width: 100%;
   text-align: center;
-  border-radius: 16px;
-  padding: 14px 16px;
+  border-radius: 18px;
+  padding: 14px 18px;
   background: rgba(5,8,22,0.72);
   border: 1px solid rgba(255,255,255,0.10);
   color: rgba(245,245,245,0.92);
