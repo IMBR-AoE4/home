@@ -763,3 +763,8 @@ main.quiz-root .app {
     padding: 80px 16px 16px !important;
   }
 }
+
+.points-cell {
+  font-weight: 700;
+  color: #6bbcff; /* azul clarinho */
+}
