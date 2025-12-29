@@ -181,7 +181,7 @@
             <td><span class="elo-pill ${getEloClass(team)}">${team}</span></td>
             <td class="matches-cell">${matchs}</td>
             <td>${dias}</td>
-            <td>${(pontos || "").trim()}</td>
+            <td class="points-cell">${(pontos || "").trim()}</td>
             <td><a class="aoe-link" href="${perfil}" target="_blank">Ver perfil</a></td>
           `;
           tbody.appendChild(tr);
