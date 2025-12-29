@@ -56,7 +56,7 @@
 
       <div class="table-wrapper">
         <table>
-          <thead>
+         <thead>
             <tr>
               <th>Função</th>
               <th>Jogador</th>
@@ -64,6 +64,7 @@
               <th>Team Status</th>
               <th>Matches últimos 30 dias</th>
               <th>Dias no Clan</th>
+              <th>Pontuação</th>
               <th>Perfil aoe4world</th>
             </tr>
           </thead>
@@ -157,7 +158,7 @@
 
         csv.trim().split("\n").slice(1).forEach(line => {
           if (!line.trim()) return;
-          const [nome, role, solo, team, matchs, dias, perfil] = line.split(",");
+          const [nome, role, solo, team, matchs, dias, pontos, perfil] = line.split(",");
 
           if (!nome) return;
 
@@ -171,6 +172,7 @@
             <td><span class="elo-pill ${getEloClass(team)}">${team}</span></td>
             <td class="matches-cell">${matchs}</td>
             <td>${dias}</td>
+            <td>${(pontos || "").trim()}</td>
             <td><a class="aoe-link" href="${perfil}" target="_blank">Ver perfil</a></td>
           `;
           tbody.appendChild(tr);
