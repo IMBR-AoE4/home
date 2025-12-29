@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMBR – Lineup & Staff</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="menu-container"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo-link">
+        <div class="logo-box">
+          <img src="imbr-logo.png" alt="Logo Clan IMBR" />
+          <div>
+            <div class="logo-text-main">IMBR</div>
+            <div class="logo-text-sub">Clan 100% Brasileiro · Age of Empires IV</div>
+          </div>
+        </div>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" data-menu-open>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- CONTADOR DE CARGOS -->
+    <section class="roles-count-card" id="roles-count-card">
+      <h2 class="roles-count-title">📊 Distribuição por Cargo</h2>
+      <p class="roles-count-sub">Resumo dos membros do clã de acordo com suas funções</p>
+      <div class="roles-count-grid" id="roles-count-grid"></div>
+    </section>
+
+    <!-- LINEUP -->
+    <section class="lineup-card">
+      <div class="lineup-header">
+        <div>
+          <h2 class="lineup-title">Lineup &amp; Staff</h2>
+          <p class="lineup-sub">
+            Lista de jogadores titulares, reservas, coach e management do clan.
+          </p>
+        </div>
+        <div class="role-pill">
+          <span class="role-dot"></span> Atualizado automaticamente
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Função</th>
+              <th>Jogador</th>
+              <th>Solo Status</th>
+              <th>Team Status</th>
+              <th>Matches últimos 30 dias</th>
+              <th>Dias no Clan</th>
+              <th>Perfil aoe4world</th>
+            </tr>
+          </thead>
+          <tbody id="lineup-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>Desenvolvido por AzX (Gui) · IMBR · Age of Empires IV · Brasil</span>
+  </footer>
+
+  <script src="menu.js"></script>
+
+  <!-- SCRIPT DO LINEUP (o mesmo que você já usa) -->
+  <script>
+    function aplicarCorPartidas(elemento, valor) {
+      if (valor == null) return;
+      const numero = parseInt(valor.toString().replace("+", ""));
+      if (isNaN(numero)) return;
+
+      elemento.classList.remove("partidas-vermelho","partidas-amarelo","partidas-verde");
+      elemento.style.fontWeight = "bold";
+
+      if (numero === 0) {
+        elemento.classList.add("partidas-vermelho");
+      } else if (numero < 30) {
+        const t = (numero - 1) / 28;
+        const hue = 50 * t;
+        elemento.style.color = `hsl(${hue}, 100%, 50%)`;
+      } else {
+        elemento.classList.add("partidas-verde");
+      }
+    }
+
+    const SHEET_CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pub?gid=1146212629&single=true&output=csv";
+
+    const roleClassMap = {
+      "Coach": "coach",
+      "Titular": "main",
+      "Reserva": "sub",
+      "Serie B": "sub",
+      "Recruta": "sub",
+      "Manager": "staff",
+      "Staff": "staff"
+    };
+
+    const roleGroupMap = {
+      "Coach": "Coach",
+      "Titular": "Titular",
+      "Reserva": "ReservasRecrutas",
+      "Serie B": "ReservasRecrutas",
+      "Recruta": "ReservasRecrutas",
+      "Manager": "Management",
+      "Staff": "Management"
+    };
+
+    const roleCounters = {
+      "Coach": 0,
+      "Titular": 0,
+      "ReservasRecrutas": 0,
+      "Management": 0
+    };
+
+    const roleGroupsOrder = [
+      { key: "Coach", label: "Coach", className: "coach" },
+      { key: "Titular", label: "Titular", className: "main" },
+      { key: "ReservasRecrutas", label: "Reserva / Recruta", className: "sub" },
+      { key: "Management", label: "Staff", className: "staff" }
+    ];
+
+    function getEloClass(texto) {
+      const t = (texto || "").toLowerCase();
+      if (t.includes("conquer")) return "elo-conqueror";
+      if (t.includes("diamond")) return "elo-diamond";
+      if (t.includes("plat")) return "elo-platinum";
+      if (t.includes("gold")) return "elo-gold";
+      if (t.includes("silver")) return "elo-silver";
+      if (t.includes("bronze")) return "elo-bronze";
+      return "";
+    }
+
+    fetch(SHEET_CSV_URL)
+      .then(r => r.text())
+      .then(csv => {
+        const tbody = document.getElementById("lineup-body");
+        const grid = document.getElementById("roles-count-grid");
+
+        csv.trim().split("\n").slice(1).forEach(line => {
+          if (!line.trim()) return;
+          const [nome, role, solo, team, matchs, dias, perfil] = line.split(",");
+
+          if (!nome) return;
+
+          roleCounters[roleGroupMap[role]]++;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="role-badge ${roleClassMap[role]}">${role}</span></td>
+            <td>${nome}</td>
+            <td><span class="elo-pill ${getEloClass(solo)}">${solo}</span></td>
+            <td><span class="elo-pill ${getEloClass(team)}">${team}</span></td>
+            <td class="matches-cell">${matchs}</td>
+            <td>${dias}</td>
+            <td><a class="aoe-link" href="${perfil}" target="_blank">Ver perfil</a></td>
+          `;
+          tbody.appendChild(tr);
+          aplicarCorPartidas(tr.querySelector(".matches-cell"), matchs);
+        });
+
+        roleGroupsOrder.forEach(g => {
+          const box = document.createElement("div");
+          box.className = `role-count-box ${g.className}`;
+          box.innerHTML = `
+            <div class="role-count-title">${g.label}</div>
+            <div class="role-count-number">${roleCounters[g.key]}</div>
+          `;
+          grid.appendChild(box);
+        });
+      });
+  </script>
+</body>
+</html>
