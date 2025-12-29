@@ -159,6 +159,15 @@
         csv.trim().split("\n").slice(1).forEach(line => {
           if (!line.trim()) return;
           const [nome, role, solo, team, matchs, dias, pontos, perfil] = line.split(",");
+          let nomeFormatado = nome;
+          const upperNome = (nome || "").toUpperCase();
+          if (upperNome.startsWith("IMBR")) {
+            let resto = nome.slice(4).trim();
+            if (resto.startsWith("|")) {
+              resto = resto.slice(1).trim();
+            }
+            nomeFormatado = `<span class="imbr-pulse">IMBR</span>${resto ? " | " + resto : ""}`;
+          }
 
           if (!nome) return;
 
@@ -167,7 +176,7 @@
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><span class="role-badge ${roleClassMap[role]}">${role}</span></td>
-            <td>${nome}</td>
+            <td>${nomeFormatado}</td>
             <td><span class="elo-pill ${getEloClass(solo)}">${solo}</span></td>
             <td><span class="elo-pill ${getEloClass(team)}">${team}</span></td>
             <td class="matches-cell">${matchs}</td>
