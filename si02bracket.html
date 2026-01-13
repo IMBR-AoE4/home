@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IMBR Seletiva Interna #02</title>
+  <style>
+    :root{
+  /* IMBR dark vibe (baseado no style.css) */
+  --bg-dark:#050816;
+  --bg-card:#0b1020;
+
+  --accent-green:#00b36b;
+  --accent-yellow:#f5c542;
+  --accent-blue:#1c7ed6;
+
+  --text-main:#f5f5f5;
+  --text-soft:#b0b3c0;
+
+  --border-soft:#252a3a;
+  --shadow-soft: 0 18px 40px rgba(0,0,0,0.65);
+
+  /* mapeia para os tokens do bracket (sem mexer em tamanhos) */
+  --bg: var(--bg-dark);
+  --panel: var(--bg-card);
+  --ink: var(--text-main);
+  --muted: var(--text-soft);
+  --line: rgba(255,255,255,.08);
+  --line2: rgba(255,255,255,.05);
+  --win: var(--accent-green);
+  --lose: #ff4d4d;
+
+  /* “zoom” global (0.8 = 80%) */
+  --uiScale: .80;
+
+  /* dimensões (ajuste fino aqui) */
+  --colW: 320px;
+  --boxH: 52px;
+  --boxPad: 10px;
+  --gapR1: 12px;
+  --radius: 14px;
+}
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(circle at top, #13315c 0, var(--bg-dark) 50%, #02040a 100%);
+  color:var(--ink);
+  overflow:hidden;
+  line-height:1.35;
+}
+
+    header{
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(90deg, rgba(5,8,22,0.95), rgba(0,40,80,0.92));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+}
+    .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900; letter-spacing:.3px;
+    }
+    .badge{
+  font-size:12px;
+  padding:4px 10px;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:999px;
+  color:var(--muted);
+  background: rgba(255,255,255,0.04);
+}
+    .meta{
+      display:flex; gap:10px; align-items:center; color:var(--muted); font-size:12px;
+    }
+    .btn{
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+  color:var(--ink);
+  padding:8px 12px;
+  border-radius:12px;
+  font-weight:900;
+  transition: background .18s ease, transform .18s ease, border-color .18s ease;
+}
+    .btn:hover{ background: rgba(0,179,107,0.18); border-color: rgba(0,179,107,0.45); transform: translateY(-1px); }
+
+    main{
+      height: calc(100% - 64px);
+      padding: 12px;
+    }
+
+    /* palco do bracket (aplica o zoom 80% estilo Chrome) */
+    .stage{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      background: radial-gradient(circle at top left, rgba(0,179,107,0.22), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(28,126,214,0.25), transparent 55%),
+        var(--panel);
+      overflow:hidden;
+
+      transform: scale(var(--uiScale));
+      transform-origin: top left;
+
+      width: calc(100% / var(--uiScale));
+      height: calc(100% / var(--uiScale));
+    }
+
+    .bracket{
+      position:absolute;
+      inset:0;
+      padding: 14px;
+    }
+
+    svg#wires{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+    }
+
+    .round{
+      position:absolute;
+      top: 14px;
+      width: var(--colW);
+      height: calc(100% - 28px);
+    }
+    .r-title{
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.4px;
+      color: var(--accent-yellow);
+      margin: 0 0 10px 0;
+      padding: 0 2px;
+    }
+
+    .match{
+      position:absolute;
+      width: var(--colW);
+      height: var(--boxH);
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(to bottom, rgba(11,16,32,0.96), rgba(8,12,26,0.96));
+      box-shadow: var(--shadow-soft);
+      overflow:visible; /* tooltip pode sair pra fora */
+    }
+
+    /* BYE (99-0): some a pill sem mover nada */
+    .match.isBye{
+      visibility: hidden;       /* ocupa o espaço, mas some */
+      pointer-events: none;     /* não interage */
+    }
+
+    .m-top{
+      height: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 6px var(--boxPad) 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .chip{
+      font-size:11px;
+      font-weight:900;
+      color: var(--text-main);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .m-body{
+      height: calc(var(--boxH) - 18px);
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items:center;
+      gap:10px;
+      padding: 0 var(--boxPad);
+    }
+    .p{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:900;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .vs{
+      color: var(--muted);
+      font-weight:900;
+      font-size:11px;
+      letter-spacing:.35px;
+      opacity:.9;
+      user-select:none;
+    }
+
+    .win{
+      outline: 1px solid rgba(0,179,107,0.55);
+      box-shadow:
+        0 0 0 1px rgba(0,179,107,0.22) inset,
+        0 12px 35px rgba(0,179,107,0.18);
+    }
+    .win .chip{ border-color: rgba(0,179,107,0.55); }
+    .winmark{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: rgba(0,255,153,.92);
+      box-shadow: 0 0 0 3px rgba(0,255,153,.18);
+      flex: 0 0 auto;
+    }
+
+    .foot{
+      position:absolute;
+      left:14px;
+      bottom:12px;
+      right:14px;
+      display:flex;
+      justify-content:space-between;
+      color: var(--muted);
+      font-size:11px;
+      opacity:.95;
+    }
+    .warn{ color: var(--accent-yellow); font-weight:900; }
+
+    /* Tooltip do draft (imagem) – abre pro lado */
+    .draftTip{
+      position:absolute;
+      left: calc(100% + 12px);   /* direita */
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+
+      width: 800px;
+      max-width: 85vw;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(5,8,22,0.96);
+      box-shadow: var(--shadow-soft);
+      display:none;
+    }
+
+    .draftTip img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .draftTip .cap{ display:none; }
+
+    .match.hasDraft:hover .draftTip{ display:block; }
+
+    /* flip automático para esquerda */
+    .match.tipLeft .draftTip{
+      left: auto;
+      right: calc(100% + 14px);
+    }
+
+    @media (max-width: 1700px){
+      :root{ --colW: 300px; --boxH: 50px; --gapR1: 10px; }
+    }
+    @media (max-width: 1500px){
+      :root{ --colW: 280px; --boxH: 48px; --gapR1: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <span>IMBR : BRACKET</span>
+      <span class="badge">Seletiva Interna #02 (16, 17 e 18 de Janeiro de 2025</span>
+    </div>
+    <div class="meta">
+      <span id="last">Carregando…</span>
+      <button class="btn" id="reload">Atualizar</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="stage" id="stage">
+      <svg id="wires"></svg>
+
+      <div class="bracket" id="bracket">
+        <div class="round" id="round1"><div class="r-title">Pré (Sexta - Horário livre)</div></div>
+        <div class="round" id="round2"><div class="r-title">Oitavas (Sábado 14h)</div></div>
+        <div class="round" id="round3"><div class="r-title">Quartas (Sábado 16:30)</div></div>
+        <div class="round" id="round4"><div class="r-title">Semis (Domingo 14h)</div></div>
+        <div class="round" id="round5"><div class="r-title">Final (Domingo 16:30)</div></div>
+
+        <div class="foot">
+          <span id="hint"></span>
+          <span>Auto-update: 20s</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ==== Fonte (sua planilha publicada) ====
+    const PUBHTML_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTihzZmyAJhTVjALmuX1R1YTGyuW0p-5umWppci2rQVRMJ5h1m2IrkZo4wi4MUN_fZ03vxu2vwFT2ob/pubhtml?gid=1150926553&single=true";
+    const CSV_URL = PUBHTML_URL.replace("/pubhtml", "/pub").replace(/(\?|&)single=true/g, "") + "&output=csv&single=true";
+
+    function csvUrlNoCache(){
+      return CSV_URL + "&t=" + Date.now();
+    }
+
+    // mapeamento por linhas (sem header)
+    const ranges = {
+      r1: [0,15],    // linhas 2..17
+      r2: [16,23],   // 18..25
+      r3: [24,27],   // 26..29
+      r4: [28,29],   // 30..31
+      r5: [30,30],   // 32
+    };
+    const expectedMatches = 31;
+
+    const bracket = document.getElementById("bracket");
+    const wires = document.getElementById("wires");
+    const last = document.getElementById("last");
+    const hint = document.getElementById("hint");
+
+    const roundsEls = [
+      document.getElementById("round1"),
+      document.getElementById("round2"),
+      document.getElementById("round3"),
+      document.getElementById("round4"),
+      document.getElementById("round5"),
+    ];
+
+    function nowStr(){
+      const d = new Date();
+      return d.toLocaleString("pt-BR", { hour12:false });
+    }
+
+    function parseCSV(text){
+      const rows = [];
+      let cur = [], field = "", inQuotes = false;
+      for (let i=0; i<text.length; i++){
+        const c = text[i], next = text[i+1];
+        if (c === '"'){
+          if (inQuotes && next === '"'){ field += '"'; i++; }
+          else inQuotes = !inQuotes;
+        } else if (c === ',' && !inQuotes){
+          cur.push(field); field = "";
+        } else if ((c === '\n' || c === '\r') && !inQuotes){
+          if (c === '\r' && next === '\n') i++;
+          cur.push(field); rows.push(cur);
+          cur = []; field = "";
+        } else field += c;
+      }
+      if (field.length || cur.length){ cur.push(field); rows.push(cur); }
+      return rows.filter(r => r.some(x => String(x).trim() !== ""));
+    }
+
+    function normalizeHeaders(headerRow){
+      const map = {};
+      headerRow.forEach((h, idx) => map[String(h).trim().toLowerCase()] = idx);
+      const idx = (name, fall=[]) => {
+        if (map[name] !== undefined) return map[name];
+        for (const f of fall) if (map[f] !== undefined) return map[f];
+        return -1;
+      };
+      return {
+        id: idx("id", ["pos"]),
+        type: idx("type"),
+        p1: idx("player1"),
+        p2: idx("player2"),
+        draft: idx("draft"),
+        s1: idx("score1"),
+        s2: idx("score2"),
+        // tenta achar por header; se não existir, cai no fallback "coluna F" (índice 5)
+        draft_img: idx("draft_img", ["draftimage","draft_image","image","img","link","draft_link"]),
+        winner: idx("winner"),
+      };
+    }
+
+    function pickCell(row, idx, fallbackIdx){
+      if (idx >= 0) return row[idx] ?? "";
+      if (fallbackIdx !== undefined && fallbackIdx >= 0) return row[fallbackIdx] ?? "";
+      return "";
+    }
+
+    async function loadViaCSV(){
+      const res = await fetch(csvUrlNoCache(), {
+        cache: "no-store",
+        headers: { "pragma":"no-cache", "cache-control":"no-cache" }
+      });
+      if (!res.ok) throw new Error("CSV fetch falhou");
+      const txt = await res.text();
+      const table = parseCSV(txt);
+      const H = normalizeHeaders(table[0]);
+      const body = table.slice(1);
+
+      return body.map(row => ({
+        id: pickCell(row, H.id),
+        type: pickCell(row, H.type),
+        player1: pickCell(row, H.p1),
+        player2: pickCell(row, H.p2),
+        draft: pickCell(row, H.draft),
+        score1: pickCell(row, H.s1),
+        score2: pickCell(row, H.s2),
+        // fallback "coluna F" = índice 5 (0-based)
+        draft_img: pickCell(row, H.draft_img, 5),
+        winner: pickCell(row, H.winner),
+      }));
+    }
+
+    // fallback (se CSV bloquear por CORS)
+    async function loadViaPubHtml(){
+      const res = await fetch(PUBHTML_URL + "&t=" + Date.now(), { cache:"no-store" });
+      if (!res.ok) throw new Error("pubhtml fetch falhou");
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const table = doc.querySelector("table");
+      if (!table) throw new Error("não achei tabela no pubhtml");
+      const rows = [...table.querySelectorAll("tr")].map(tr =>
+        [...tr.querySelectorAll("th,td")].map(td => td.textContent.trim())
+      ).filter(r => r.length);
+
+      const H = normalizeHeaders(rows[0]);
+      const body = rows.slice(1);
+
+      return body.map(row => ({
+        id: pickCell(row, H.id),
+        type: pickCell(row, H.type),
+        player1: pickCell(row, H.p1),
+        player2: pickCell(row, H.p2),
+        draft: pickCell(row, H.draft),
+        score1: pickCell(row, H.s1),
+        score2: pickCell(row, H.s2),
+        // fallback "coluna F" = índice 5 (0-based)
+        draft_img: pickCell(row, H.draft_img, 5),
+        winner: pickCell(row, H.winner),
+      }));
+    }
+
+    async function loadAll(){
+      try { return await loadViaCSV(); }
+      catch { return await loadViaPubHtml(); }
+    }
+
+    function sliceMatches(all, a, b){ return all.slice(a, b+1); }
+    function winnerOf(m){ return String(m.winner||"").trim(); }
+
+    function isBye(m){
+      const s1 = parseInt(String(m.score1||"").trim(), 10);
+      const s2 = parseInt(String(m.score2||"").trim(), 10);
+      return (s1 === 99 && s2 === 0) || (s1 === 0 && s2 === 99);
+    }
+
+    function normalizeImgUrl(url){
+      const u = String(url||"").trim();
+      if (!u) return "";
+      if (/\.(png|jpg|jpeg|webp|gif)(\?.*)?$/i.test(u)) return u;
+
+      const m = u.match(/drive\.google\.com\/file\/d\/([^/]+)\//i);
+      if (m && m[1]) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+
+      return u;
+    }
+
+    function makeMatchEl(m){
+      const el = document.createElement("div");
+      el.className = "match";
+      el.dataset.id = String(m.id||"").trim();
+
+      // ✅ só esconde BYE (99-0 / 0-99)
+      if (isBye(m)) el.classList.add("isBye");
+
+      const w = winnerOf(m);
+      const p1 = String(m.player1||"").trim();
+      const p2 = String(m.player2||"").trim();
+      const p1Win = w && w === p1;
+      const p2Win = w && w === p2;
+
+      if (w) el.classList.add("win");
+
+      const chipText = (m.id || "—");
+      const typeText = (m.type || "");
+      // não mostra o campo "draft" como texto (evita vazar URL na pill)
+      const rightTopBase = typeText || "";
+
+      const img = normalizeImgUrl(m.draft_img);
+      const hasImg = !!img;
+      if (hasImg) el.classList.add("hasDraft");
+
+      const scoreShown = (String(m.score1||"").trim() !== "" || String(m.score2||"").trim() !== "")
+        ? `${m.score1||"0"}–${m.score2||"0"}`
+        : "VS";
+
+      el.innerHTML = `
+        <div class="m-top">
+          <span class="chip">${chipText}</span>
+          <span>${rightTopBase}</span>
+        </div>
+
+        <div class="m-body">
+          <div class="p" title="${p1}">
+            ${p1Win ? '<span class="winmark"></span>' : ''}
+            <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p1 || "—"}</span>
+          </div>
+          <div class="vs">${scoreShown}</div>
+          <div class="p" style="justify-content:flex-end;text-align:right" title="${p2}">
+            <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p2 || "—"}</span>
+            ${p2Win ? '<span class="winmark"></span>' : ''}
+          </div>
+        </div>
+
+        ${hasImg ? `
+          <div class="draftTip">
+            <img src="${img}" alt="Draft da partida" loading="lazy" />
+          </div>
+        ` : ``}
+      `;
+
+      return el;
+    }
+
+    function padTo(arr, n){
+      while(arr.length < n){
+        arr.push({id:"",type:"",player1:"",player2:"",draft:"",score1:"",score2:"",winner:"",draft_img:""});
+      }
+      return arr;
+    }
+
+    // decide se o tooltip vai pra esquerda quando faltar espaço
+    function applyTooltipFlip(){
+      const margin = 18;
+      document.querySelectorAll(".match.hasDraft").forEach(el => {
+        el.classList.remove("tipLeft");
+        const tip = el.querySelector(".draftTip");
+        if (!tip) return;
+
+        const r = el.getBoundingClientRect();
+        const spaceRight = window.innerWidth - r.right - margin;
+        const tipW = tip.offsetWidth || 800;
+
+        if (spaceRight < tipW) el.classList.add("tipLeft");
+      });
+    }
+
+    function layout(rounds){
+      roundsEls.forEach(r => [...r.querySelectorAll(".match")].forEach(n => n.remove()));
+      wires.innerHTML = "";
+
+      const css = getComputedStyle(document.documentElement);
+      const colW  = parseFloat(css.getPropertyValue("--colW"));
+      const boxH  = parseFloat(css.getPropertyValue("--boxH"));
+      const gapR1 = parseFloat(css.getPropertyValue("--gapR1"));
+
+      const padX = 14;
+      const topY = 14 + 26;
+      const usableH = bracket.clientHeight - 14 - 12 - 26 - 20;
+
+      const totalW = (colW * 5) + (36 * 4);
+      const startX = Math.max(padX, (bracket.clientWidth - totalW)/2);
+      const gapX = 36;
+
+      roundsEls.forEach((col, i)=>{
+        col.style.left = (startX + i*(colW+gapX)) + "px";
+      });
+
+      const r1Count = rounds[0].length;
+      const r1Total = (r1Count * boxH) + ((r1Count - 1) * gapR1);
+      const baseY = Math.max(topY, topY + (usableH - r1Total)/2);
+
+      const centers = [[],[],[],[],[]];
+      const nodes   = [[],[],[],[],[]];
+
+      // R1
+      for (let i=0; i<r1Count; i++){
+        const el = makeMatchEl(rounds[0][i]);
+        const y  = baseY + i*(boxH + gapR1);
+        el.style.top = y + "px";
+        roundsEls[0].appendChild(el);
+
+        nodes[0].push(el);
+        centers[0].push(y + boxH/2);
+      }
+
+      // R2..R5: centro entre os dois filhos
+      for (let r=1; r<5; r++){
+        const count = rounds[r].length;
+
+        for (let i=0; i<count; i++){
+          const childA = centers[r-1][i*2];
+          const childB = centers[r-1][i*2 + 1];
+
+          const cy = (childA !== undefined && childB !== undefined)
+            ? (childA + childB)/2
+            : (centers[r-1][i] ?? (baseY + boxH/2));
+
+          const y = cy - boxH/2;
+
+          const el = makeMatchEl(rounds[r][i]);
+          el.style.top = y + "px";
+          roundsEls[r].appendChild(el);
+
+          nodes[r].push(el);
+          centers[r].push(cy);
+        }
+      }
+
+      return nodes;
+    }
+
+    // SVG wires corrigidos pro SCALE (zoom 80%) + pular BYE
+    function drawWires(nodes){
+      wires.innerHTML = "";
+
+      const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--uiScale")) || 1;
+      wires.setAttribute("viewBox", `0 0 ${bracket.clientWidth} ${bracket.clientHeight}`);
+
+      const bracketRect = bracket.getBoundingClientRect();
+
+      function centerPoint(el, side){
+        const r = el.getBoundingClientRect();
+        const xVisual = (side === "left") ? (r.left - bracketRect.left) : (r.right - bracketRect.left);
+        const yVisual = (r.top - bracketRect.top) + (r.height/2);
+        return { x: xVisual / scale, y: yVisual / scale };
+      }
+
+      const stroke  = "rgba(11,18,32,.20)";
+      const stroke2 = "rgba(11,18,32,.12)";
+
+      function drawPair(child1, child2, parent){
+        const pL  = centerPoint(parent, "left");
+        const c1R = centerPoint(child1, "right");
+        const c2R = centerPoint(child2, "right");
+
+        const midX = (c1R.x + pL.x) / 2;
+
+        const d  = `M ${c1R.x} ${c1R.y} L ${midX} ${c1R.y} L ${midX} ${c2R.y} L ${c2R.x} ${c2R.y}`;
+        const d2 = `M ${midX} ${(c1R.y+c2R.y)/2} L ${pL.x} ${pL.y}`;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.setAttribute("d", d);
+        path.setAttribute("fill","none");
+        path.setAttribute("stroke", stroke2);
+        path.setAttribute("stroke-width","2");
+        path.setAttribute("stroke-linecap","round");
+        path.setAttribute("stroke-linejoin","round");
+
+        const path2 = document.createElementNS("http://www.w3.org/2000/svg","path");
+        path2.setAttribute("d", d2);
+        path2.setAttribute("fill","none");
+        path2.setAttribute("stroke", stroke);
+        path2.setAttribute("stroke-width","2");
+        path2.setAttribute("stroke-linecap","round");
+        path2.setAttribute("stroke-linejoin","round");
+
+        wires.appendChild(path);
+        wires.appendChild(path2);
+      }
+
+      function drawSingle(child, parent){
+        const pL = centerPoint(parent, "left");
+        const cR = centerPoint(child, "right");
+
+        const midX = (cR.x + pL.x) / 2;
+        const d = `M ${cR.x} ${cR.y} L ${midX} ${cR.y} L ${midX} ${pL.y} L ${pL.x} ${pL.y}`;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.setAttribute("d", d);
+        path.setAttribute("fill","none");
+        path.setAttribute("stroke", stroke);
+        path.setAttribute("stroke-width","2");
+        path.setAttribute("stroke-linecap","round");
+        path.setAttribute("stroke-linejoin","round");
+
+        wires.appendChild(path);
+      }
+
+      for (let r=1; r<5; r++){
+        for (let i=0; i<nodes[r].length; i++){
+          const parent = nodes[r][i];
+          const child1 = nodes[r-1][i*2];
+          const child2 = nodes[r-1][i*2+1];
+
+          if (!parent) continue;
+
+          const valid1 = child1 && !child1.classList.contains("isBye");
+          const valid2 = child2 && !child2.classList.contains("isBye");
+
+          if (valid1 && valid2){ drawPair(child1, child2, parent); continue; }
+          if (valid1 && !valid2){ drawSingle(child1, parent); continue; }
+          if (!valid1 && valid2){ drawSingle(child2, parent); continue; }
+        }
+      }
+    }
+
+    async function loadAndRender(){
+      try{
+        const all = await loadAll();
+
+        if (all.length < expectedMatches){
+          hint.innerHTML = `<span class="warn">Aviso: achei ${all.length}/${expectedMatches} partidas. Confere se publicou as 31 linhas.</span>`;
+        } else {
+          hint.textContent = `Fonte: planilha publicada • ${expectedMatches} partidas`;
+        }
+
+        const r1 = padTo(sliceMatches(all, ...ranges.r1), 16);
+        const r2 = padTo(sliceMatches(all, ...ranges.r2), 8);
+        const r3 = padTo(sliceMatches(all, ...ranges.r3), 4);
+        const r4 = padTo(sliceMatches(all, ...ranges.r4), 2);
+        const r5 = padTo(sliceMatches(all, ...ranges.r5), 1);
+
+        const nodes = layout([r1,r2,r3,r4,r5]);
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            drawWires(nodes);
+            applyTooltipFlip();
+          });
+        });
+
+        last.textContent = `Atualizado: ${nowStr()}`;
+      }catch(err){
+        console.error(err);
+        hint.innerHTML = `<span class="warn">Não consegui ler a planilha (CORS/cache).</span>`;
+        last.textContent = `Erro ao carregar`;
+      }
+    }
+
+    document.getElementById("reload").addEventListener("click", loadAndRender);
+
+    loadAndRender();
+    setInterval(loadAndRender, 20000);
+
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(loadAndRender, 160);
+    });
+  </script>
+</body>
+</html>
